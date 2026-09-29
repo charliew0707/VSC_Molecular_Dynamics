@@ -261,6 +261,13 @@ git commit -m "H2O cavity run lambda=0.1"
 git push
 ```
 
+- **Automatically skipped:** `.gitignore` leaves out each run's `md.traj`,
+  `force.dat`, `force_bare.dat` and `position.dat`. These are the big per-step
+  files; a 10,000-step run is about 35 MB of them. They stay on your laptop, and
+  everything needed for spectra and plots (`dipole.dat`, `energy.dat`,
+  `photon.dat`, `polarizability.dat`, `spectrum_ase.dat`, `in.json`,
+  `run_info.json`) is still committed. To push one on purpose:
+  `git add -f runs/.../md.traj`.
 - **Commit:** run folders with small outputs, figures, scripts, configs and reports.
 - **Don't commit** anything over about 50 MB (GitHub blocks files over 100 MB).
   Move big trajectories to `large/` and keep only the `.dat` files and

@@ -23,3 +23,10 @@ __pycache__/
 
 # Put large trajectories/checkpoints (>~50 MB) here so they stay local
 large/
+
+# Big per-step MD outputs: kept on disk, not pushed to GitHub.
+# (dipole/energy/photon/polarizability .dat, spectra, in.json and run_info.json ARE committed)
+runs/**/md.traj
+runs/**/force.dat
+runs/**/force_bare.dat
+runs/**/position.dat
