@@ -1,8 +1,8 @@
 """
 compare_bend_hanning.py
-Run from: ~/Downloads/polaritonic_deep_md/test_runs/h2o/
+Run from: runs/h2o/  (reads pyscf/dipole.dat and pyscf_cavity/dipole.dat)
 
-Improvement over compare_bend.py:
+Method:
 - Reads raw dipole.dat instead of spectrum_ase.dat
 - Applies a Hanning window before FFT to kill spectral leakage
 - Zero-pads 4x for a smoother frequency axis
