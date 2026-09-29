@@ -102,7 +102,7 @@ python scripts/run.py <molecule> <driver> [options]
 |---|---|---|---|
 | `ff` | built-in classical CO₂ force field | seconds | **CO₂ only** |
 | `pyscf` | DFT on the fly (LDA / cc-pVDZ by default) | minutes to hours | any molecule |
-| `nep` | trained neural-network potential | fast | only where a model exists (CO₂). **Needs model files, see §7** |
+| `nep` | trained neural-network potential | fast (200 cavity steps ≈ 1 s) | only where a model exists: CO₂ (see §7) |
 
 **Rough cost:** 10 PySCF H₂O steps take about 3 s on this laptop, so the default
 2000 steps takes about 10 minutes. CO₂ `ff` runs 200 steps in well under a second.
@@ -211,19 +211,24 @@ skipped automatically.
 
 ---
 
-## 7. NEP models (not set up yet)
+## 7. NEP models
 
-The CO₂ NEP models were only on Yli's cluster (`/mnt/home/yli11/...`). Ask for
-copies and place them at:
+The `nep` driver for CO₂ uses the NEP models (energy, dipole, polarizability)
+that Johannes committed to the shared repo on 2026-06-15:
 
 ```
-large/models/co2_nep/ener_model_nep/nep.txt
-large/models/co2_nep/dipole_model_nep/nep.txt
-large/models/co2_nep/polarizability_model_nep/nep.txt
+../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-{energy,dipole,polar}.txt
 ```
 
-`large/` is gitignored, so the models stay local. Until they're there, `run.py`
-warns "nep_pot not found".
+`configs/molecules/co2.json` points straight at them, so a `git pull` there
+picks up any updated models. They reproduce the older `runs/co2/nep` run exactly.
+They're the models the group's own tests and Bonini-comparison benchmarks use.
+Yli's production models (`/mnt/home/yli11/...` on the cluster) may differ. To
+use other models, drop them in `large/models/` and override with
+`--set nep_pot=... --set nep_dip=... --set nep_pol=...`.
+
+NEP runs print an ASE `FutureWarning` about `ignore_bad_restart_file`. It's
+harmless.
 
 ---
 
@@ -272,7 +277,7 @@ git push
 | `ImportError ... scipy` / `_spropack` | You're in base Anaconda. Run `conda activate vsc`. |
 | `'cboamd' not found next to ...python` | Wrong environment, or the group code isn't installed in it: `pip install -e ../polaritonic_deep_md` |
 | `... already exists; use --name` | Same run already done today. Add `--name v2`. |
-| `warning: nep_pot not found` | NEP models are missing (§7). |
+| `warning: nep_pot not found` | Model path is wrong; check that the shared repo is at `../polaritonic_deep_md` (§7). |
 | Run crashed partway | Read `run.log` in the run folder, then delete the folder and re-run. |
 | `polaritonic_deep_md is locked` | You tried to commit in the shared repo. Commit in your own repo instead. |
 | Claude can't see a folder | macOS blocks Desktop, Documents and Downloads. Keep projects under `~/Flick Group Code/`. |

@@ -71,8 +71,8 @@ Each run folder gets `in.json`, `run_info.json` (command + shared-repo commit),
 - **Presets:** `configs/defaults.json`, `configs/molecules/<mol>.json` (geometry,
   cavity frequency in cm⁻¹, polarization), `configs/drivers/<driver>.json`. Add a
   JSON file there to add a molecule or driver.
-- **NEP models** are not in git. Put the CO₂ models in `large/models/co2_nep/`
-  (see `configs/molecules/co2.json` for the paths).
+- **NEP (CO₂)** uses the models committed in the shared repo
+  (`tests/e2e/no-polar/mlip/models/`). See docs/GUIDE.md §7.
 
 ## Analysis
 
