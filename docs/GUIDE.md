@@ -137,7 +137,7 @@ run on the same day, give it a `--name`.
 | `run.log` | everything printed during the run (check here if it fails) | |
 | `settings.json` | the full settings `cboamd` actually used, including defaults | |
 | `md.log` | per-step time, total/potential/kinetic energy, temperature | ps, eV, K |
-| `dipole.dat` | step, time, dipole x/y/z | a.u. |
+| `dipole.dat` | 8 columns (header lists only 5): 0 step, 1 time, **2–4 dipole x/y/z used by `infrared`** (`dipolepol` in the code), 5–7 a second dipole x/y/z (`dipole`; `compare_bend_hanning.py` uses col 7) | a.u. |
 | `energy.dat` | step, time, energy | eV |
 | `photon.dat` | step, time, then qa, pa, Ea for each cavity mode | a.u. |
 | `polarizability.dat` | step, time, 3×3 polarizability tensor | a.u. |
@@ -178,8 +178,10 @@ skipped automatically.
   presets do this: CO₂ lies along x, and H₂O (`geometries/h2o-single-x.xyz`) has
   its symmetry axis along x, which is the bend's dipole direction.
   - The older H₂O runs (`runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`) used the
-    z-oriented `h2o-single.xyz`. Their `spectrum_ase.dat` came from the ~10⁻¹²
-    x-dipole (noise), so for those runs use column 5 (z) of `dipole.dat`.
+    z-oriented `h2o-single.xyz`. Their `spectrum_ase.dat` files have been
+    recomputed from the z column (see the header line). The Hanning analysis
+    (`compare_bend_hanning.py`, 125 cm⁻¹ splitting) always read z directly and
+    was unaffected.
   - Quick check for any run:
     `python -c "import numpy as np; print(np.loadtxt('dipole.dat')[:,2:5].std(0))"`.
     The largest value should be x.
