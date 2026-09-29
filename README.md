@@ -30,7 +30,7 @@ Flick Group Code/
 | `scripts/`    | `run.py` launcher, analysis and plotting scripts |
 | `results/`    | Figures produced from runs |
 | `reports/`    | Write-ups (`vsc_report.tex`, PDFs) |
-| `docs/`       | Notes |
+| `docs/`       | Guide and notes |
 | `large/`      | Big trajectories/checkpoints, which git ignores |
 
 ### Runs so far
@@ -38,6 +38,8 @@ Flick Group Code/
 - `runs/co2/{ff,nep,pyscf}`: CO₂ force-backend comparison (FF vs PySCF vs NEP dipoles)
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)
+
+**Full guide: [docs/GUIDE.md](docs/GUIDE.md)**: running, where data goes, analysis tips, troubleshooting.
 
 ## Setup (once)
 
