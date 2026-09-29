@@ -1,0 +1,5 @@
+{
+    "_comment": "Built-in classical CO2 force field (CO2 only).",
+    "driver": "ff",
+    "polar": false
+}

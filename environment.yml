@@ -1,0 +1,16 @@
+# Clean environment for running polaritonic_deep_md from this repo.
+#   conda env create -f environment.yml
+#   conda activate vsc
+#   pip install -e ../polaritonic_deep_md
+name: vsc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - scipy
+  - matplotlib
+  - ase
+  - pyscf
+  - jupyter
+  - pip

@@ -1,0 +1,6 @@
+{
+    "_comment": "H2O single molecule. Cavity tuned to the bend.",
+    "xyz_file": "geometries/h2o-single.xyz",
+    "omega_cm": 1584,
+    "lambda_vector": [[0, 0, 1]]
+}

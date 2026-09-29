@@ -1,0 +1,6 @@
+{
+    "driver": "pyscf",
+    "xc": "lda,vwn",
+    "basis": "ccpvdz",
+    "polar": false
+}

@@ -26,7 +26,8 @@ Flick Group Code/
 |---------------|-----------------|
 | `geometries/` | Input structures (`.xyz`) |
 | `runs/`       | One folder per run: `runs/<molecule>/<run-name>/` with its `in.json` and outputs |
-| `scripts/`    | Analysis and plotting scripts |
+| `configs/`    | Run presets (defaults, molecules, drivers) used by `scripts/run.py` |
+| `scripts/`    | `run.py` launcher, analysis and plotting scripts |
 | `results/`    | Figures produced from runs |
 | `reports/`    | Write-ups (`vsc_report.tex`, PDFs) |
 | `docs/`       | Notes |
@@ -38,7 +39,40 @@ Flick Group Code/
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)
 
-## Quick start
+## Setup (once)
+
+```bash
+conda env create -f environment.yml
+conda activate vsc
+pip install -e ../polaritonic_deep_md
+```
+
+After that, run `conda activate vsc` in each new terminal.
+
+## Running
+
+`scripts/run.py` builds `in.json` from the presets in `configs/`, makes a new
+dated folder in `runs/<molecule>/`, and runs `cboamd` and then `infrared` there:
+
+```bash
+python scripts/run.py h2o pyscf                            # bare molecule
+python scripts/run.py h2o pyscf --cavity --lam 0.1         # cavity on resonance
+python scripts/run.py co2 nep --cavity --lam 0.05 0.1 0.2  # coupling sweep
+python scripts/run.py co2 ff --steps 20 --dry-run          # just print in.json
+python scripts/run.py co2 pyscf --set basis=augccpvdz --name bigbasis
+python scripts/run.py --help
+```
+
+Each run folder gets `in.json`, `run_info.json` (command + shared-repo commit),
+`run.log`, and all cboamd outputs (`dipole.dat`, `spectrum_ase.dat`, ...).
+
+- **Presets:** `configs/defaults.json`, `configs/molecules/<mol>.json` (geometry,
+  cavity frequency in cm⁻¹, polarization), `configs/drivers/<driver>.json`. Add a
+  JSON file there to add a molecule or driver.
+- **NEP models** are not in git. Put the CO₂ models in `large/models/co2_nep/`
+  (see `configs/molecules/co2.json` for the paths).
+
+## Analysis
 
 ```bash
 cd runs/h2o

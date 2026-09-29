@@ -1,0 +1,11 @@
+{
+    "_comment": "CO2 single molecule. Cavity tuned to the asymmetric C=O stretch.",
+    "xyz_file": "geometries/co2-disp.xyz",
+    "omega_cm": 2430,
+    "lambda_vector": [[1, 0, 0]],
+    "nep": {
+        "nep_pot": "large/models/co2_nep/ener_model_nep/nep.txt",
+        "nep_dip": "large/models/co2_nep/dipole_model_nep/nep.txt",
+        "nep_pol": "large/models/co2_nep/polarizability_model_nep/nep.txt"
+    }
+}
