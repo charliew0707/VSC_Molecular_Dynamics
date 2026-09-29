@@ -20,6 +20,7 @@ __pycache__/
 *.fdb_latexmk
 *.fls
 !runs/**/md.log
+!runs/**/run.log
 
 # Put large trajectories/checkpoints (>~50 MB) here so they stay local
 large/
