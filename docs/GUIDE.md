@@ -173,9 +173,16 @@ skipped automatically.
   2000 × 0.5 fs gives about 33 cm⁻¹, which is fine for H₂O's ~125 cm⁻¹ splitting.
   For small splittings (small λ), use `--steps 8000` or more.
 - **`infrared -m ase` only uses the x-component of the dipole** (`dipole.dat`
-  column 3). If the mode you care about oscillates along y or z, compute the
-  spectrum yourself from the right column. Check that the cavity polarization
-  (`lambda_vector`) is along the axis you expect.
+  column 3). So orient molecules so the mode you care about has its dipole
+  along **x**, and polarize the cavity along x (`lambda_vector: [[1,0,0]]`). Both
+  presets do this: CO₂ lies along x, and H₂O (`geometries/h2o-single-x.xyz`) has
+  its symmetry axis along x, which is the bend's dipole direction.
+  - The older H₂O runs (`runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`) used the
+    z-oriented `h2o-single.xyz`. Their `spectrum_ase.dat` came from the ~10⁻¹²
+    x-dipole (noise), so for those runs use column 5 (z) of `dipole.dat`.
+  - Quick check for any run:
+    `python -c "import numpy as np; print(np.loadtxt('dipole.dat')[:,2:5].std(0))"`.
+    The largest value should be x.
 - Converting cavity frequency: ω[a.u.] = ω[cm⁻¹] / 219474.63. `--omega` does this
   for you.
 

@@ -1,6 +1,6 @@
 {
-    "_comment": "H2O single molecule. Cavity tuned to the bend.",
-    "xyz_file": "geometries/h2o-single.xyz",
+    "_comment": "H2O single molecule, symmetry (C2) axis along x so the bend dipole is along x, which is the component `infrared -m ase` uses. Cavity tuned to the bend, polarized along x. (geometries/h2o-single.xyz is the old z-oriented file kept for the older runs.)",
+    "xyz_file": "geometries/h2o-single-x.xyz",
     "omega_cm": 1584,
-    "lambda_vector": [[0, 0, 1]]
+    "lambda_vector": [[1, 0, 0]]
 }
