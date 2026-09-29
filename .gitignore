@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+
+# Editors
+.vscode/
+.idea/
+
+# LaTeX build files (keep .tex and the final .pdf)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+!runs/**/md.log
+
+# Put large trajectories/checkpoints (>~50 MB) here so they stay local
+large/
