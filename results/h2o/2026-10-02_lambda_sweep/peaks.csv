@@ -1,0 +1,8 @@
+run,lambda,steps,resolution_cm-1,resolved,LP_cm-1,UP_cm-1,Rabi_cm-1
+pyscf_bare,0.0,800,83.4,True,1582,1582,0
+pyscf_cav_w1584_lam0.05_nochi,0.05,800,83.4,False,1572,1572,
+pyscf_cav_w1584_lam0.1_nochi,0.1,800,83.4,True,1520,1645,125
+pyscf_cav_w1584_lam0.15_nochi,0.15,800,83.4,True,1478,1666,187
+pyscf_cav_w1584_lam0.2_nochi,0.2,800,83.4,True,1447,1687,239
+pyscf_cav_w1584_lam0.25_nochi,0.25,800,83.4,True,1395,1718,323
+pyscf_cav_w1584_lam0.3_nochi,0.3,800,83.4,True,1353,1739,385

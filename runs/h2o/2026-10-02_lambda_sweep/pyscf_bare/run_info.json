@@ -1,0 +1,11 @@
+{
+    "command": "run.py h2o pyscf --steps 800 --campaign 2026-10-02_lambda_sweep --name bare",
+    "started": "2026-10-02T15:37:47",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "polaritonic_deep_md": {
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}

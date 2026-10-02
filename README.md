@@ -38,6 +38,22 @@ bash scripts/campaigns/co2_lambda_sweep.sh        # nep | pyscf | all (default)
 python scripts/plot_co2_sweep.py runs/co2/2026-10-02_lambda_sweep
 ```
 
+### H₂O λ sweep
+
+`runs/h2o/2026-10-02_lambda_sweep/` is the H₂O bend in a cavity at
+ω_c = 1584 cm⁻¹ (polarized along x, the molecule's C₂ axis), with λ = 0 to 0.3,
+using PySCF LDA/cc-pVDZ (χ neglected) at 800 steps (83 cm⁻¹ resolution). The
+splitting is linear in λ (Ω_R ≈ 1265·λ cm⁻¹), and λ = 0.1 reproduces the earlier
+2000-step result (125 cm⁻¹). λ = 0.05 is below resolution. Figures are in
+[`results/h2o/2026-10-02_lambda_sweep/`](results/h2o/2026-10-02_lambda_sweep/):
+
+![H₂O polariton branches](results/h2o/2026-10-02_lambda_sweep/polariton_branches.png)
+
+```bash
+bash scripts/campaigns/h2o_lambda_sweep.sh        # ~7 min
+python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep
+```
+
 ## Layout
 
 | Folder        | What goes in it |
@@ -54,6 +70,7 @@ python scripts/plot_co2_sweep.py runs/co2/2026-10-02_lambda_sweep
 ### Runs so far
 
 - `runs/co2/2026-10-02_lambda_sweep/`: CO₂ λ sweep, NEP + PySCF (see above)
+- `runs/h2o/2026-10-02_lambda_sweep/`: H₂O λ sweep, PySCF (see above)
 - `runs/co2/{ff,nep,pyscf}`: CO₂ force-backend comparison (FF vs PySCF vs NEP dipoles)
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)

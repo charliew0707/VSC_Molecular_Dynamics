@@ -182,6 +182,13 @@ Peaks are found exactly as in the group benchmark: the two strongest maxima in
 name (`*_chi`, `*_nochi`, `*_bare`), and the bare run is λ = 0 for each series.
 Incomplete runs are skipped with a message.
 
+The H₂O sweep works the same way:
+`bash scripts/campaigns/h2o_lambda_sweep.sh`, then
+`python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep` (about 7 min,
+PySCF only). It uses a zero-padded, unwindowed FFT with a 50% height rule for
+calling a split (see the script's docstring), because H₂O splittings are close to
+the 800-step resolution.
+
 For a new sweep, copy `scripts/campaigns/co2_lambda_sweep.sh` and change the
 `CAMPAIGN` name and λ values.
 
