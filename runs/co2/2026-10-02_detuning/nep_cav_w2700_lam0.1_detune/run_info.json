@@ -1,0 +1,11 @@
+{
+    "command": "run.py co2 nep --cavity --lam 0.1 --steps 10000 --set polar=false --omega 2700 --campaign 2026-10-02_detuning --name detune",
+    "started": "2026-10-02T16:18:08",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "polaritonic_deep_md": {
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}

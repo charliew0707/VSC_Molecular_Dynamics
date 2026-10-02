@@ -85,11 +85,31 @@ These were run before the 2–3 molecule work, at λ = 0.3 with 800 steps
 | `docs/`       | Guide and notes |
 | `large/`      | Big trajectories/checkpoints, which git ignores |
 
+### CO₂ single-molecule checks (2026-10-02)
+
+NEP, χ neglected, λ = 0.1, 10,000 steps (`scripts/campaigns/co2_checks.sh`, plots
+from `scripts/plot_co2_checks.py` in
+[`results/co2/2026-10-02_checks/`](results/co2/2026-10-02_checks/)). All 20 runs
+conserve energy.
+
+- **Amplitude:** Ω_R = 360 cm⁻¹ for initial displacements from 0.005 to 0.04 Å, so
+  the runs are in the linear regime and one trajectory is enough.
+- **Detuning:** the anti-crossing is fit to **2.6 cm⁻¹ rms** (below the 6.7 cm⁻¹
+  resolution) by the exact linear model (vibration + cavity mode + dipole
+  self-energy) with one parameter, √Λ = 359 cm⁻¹. The self-energy shifts the
+  effective stretch from 2438 to 2464 cm⁻¹, so true resonance (equal LP/UP
+  intensity) is about 2500 cm⁻¹, not 2438.
+- **Orientation:** Ω_R follows cos θ to within about 5% up to 45°. Beyond that,
+  CO₂ also **rotates away from the polarization** (10–38°), even though it has no
+  permanent dipole, and the splitting collapses (73 cm⁻¹ at 60°, where cos θ
+  predicts 180). Like H₂O, free molecules reorient in the cavity field.
+
 ### Runs so far
 
 - `runs/co2/2026-10-02_lambda_sweep/`: CO₂ λ sweep, NEP + PySCF (see above)
 - `runs/h2o/2026-10-02_lambda_sweep/`: H₂O λ sweep, PySCF (see above)
 - `runs/h2o/2026-10-02_{orientation,detuning}/`: H₂O single-molecule checks (see above)
+- `runs/co2/2026-10-02_{orientation,detuning,amplitude}/`: CO₂ single-molecule checks (see above)
 - `runs/co2/{ff,nep,pyscf}`: CO₂ force-backend comparison (FF vs PySCF vs NEP dipoles)
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)

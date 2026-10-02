@@ -1,0 +1,11 @@
+{
+    "command": "run.py co2 nep --cavity --lam 0.1 --steps 10000 --set polar=false --omega 2400 --campaign 2026-10-02_amplitude --name disp0.04 --set xyz_file=geometries/co2-disp-0.04.xyz",
+    "started": "2026-10-02T16:20:04",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "polaritonic_deep_md": {
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "steps": 10000,
+    "timestep": 0.5,
+    "nphoton": 1,
+    "driver": "nep",
+    "polar": false,
+    "update_polar": true,
+    "nep_pot": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-energy.txt",
+    "nep_dip": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-dipole.txt",
+    "nep_pol": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-polar.txt",
+    "xyz_file": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/geometries/co2-disp.xyz",
+    "lambda_vector": [
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    "photons": true,
+    "omega_photon": [
+        0.011108345415595414
+    ],
+    "lambda_photon": [
+        0.1
+    ]
+}
