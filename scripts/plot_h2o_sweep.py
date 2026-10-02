@@ -2,7 +2,8 @@
 Plot an H2O lambda-sweep campaign: IR spectra, polariton branches, Rabi splitting.
 
 Reads every run folder in a campaign (made by scripts/campaigns/h2o_lambda_sweep.sh):
-the bare run (*_bare) is lambda = 0, cavity runs are swept in lambda.
+the bare run (*_bare) is lambda = 0, cavity runs are swept in lambda, in two series
+by folder suffix: *_nochi (polarizability chi neglected) and *_chi (included).
 
 Spectra: FFT of the mean-subtracted dipole_x (the component `infrared -m ase` uses;
 the H2O geometry has its C2 axis, and so the bend dipole, along x), with no window
@@ -17,9 +18,10 @@ side lobes are ~20%). Otherwise the run is marked "unresolved".
 Usage:
     python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep
 Writes to results/h2o/<campaign>/:
-    ir_spectra.png          stacked IR spectra vs lambda (bend + 2500-4200 cm^-1 region)
-    polariton_branches.png  LP / UP vs lambda
-    rabi_splitting.png      UP - LP vs lambda
+    ir_spectra.png          stacked IR spectra vs lambda, chi neglected (bend + 2500-4200 cm^-1)
+    ir_spectra_chi.png      the same for chi included (if those runs exist)
+    polariton_branches.png  LP / UP vs lambda, both series
+    rabi_splitting.png      UP - LP vs lambda, both series
     peaks.csv               every run's LP, UP, Rabi splitting
 """
 
@@ -43,6 +45,8 @@ EARLIER = dict(lam=0.1, lp=1517.0, up=1642.0)
 
 # Same entity, same color as the CO2 sweep: PySCF, chi neglected = categorical slot 3
 COLOR, MARKER, LABEL = "#1baf7a", "^", "PySCF (LDA/cc-pVDZ), χ neglected, 800 steps"
+# PySCF, chi included = next categorical slot (4), circle like the CO2 chi-included series
+CHI_COLOR, CHI_MARKER, CHI_LABEL = "#eda100", "o", "PySCF (LDA/cc-pVDZ), χ included, 800 steps"
 INK, INK2, GRID, SURFACE = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 
 plt.rcParams.update({
@@ -79,12 +83,13 @@ def polaritons(freq, amp):
     return peaks[0][0], peaks[0][0], False
 
 
-def load_campaign(campaign):
+def load_campaign(campaign, tag="nochi"):
     def dipole_file(d):
         return d / "dipole.dat" if (d / "dipole.dat").exists() else d / "dipole.dat.gz"
 
     runs = []
-    for d in sorted(p for p in campaign.iterdir() if dipole_file(p).exists()):
+    for d in sorted(p for p in campaign.iterdir() if dipole_file(p).exists()
+                    and p.name.endswith(("_bare", f"_{tag}"))):
         cfg = json.loads((d / "in.json").read_text())
         dip = np.loadtxt(dipole_file(d))
         if len(dip) < cfg["steps"] + 1:
@@ -93,8 +98,13 @@ def load_campaign(campaign):
         lam = cfg["lambda_photon"][0] if cfg.get("photons") else 0.0
         freq, amp = spectrum(dip[:, 2], cfg["timestep"])
         lp, up, resolved = polaritons(freq, amp)
+        chi_xx = None
+        if cfg.get("polar") and (d / "polarizability.dat").exists():
+            chi_xx = float(np.loadtxt(d / "polarizability.dat")[:, 2].mean())
+        elif cfg.get("polar"):
+            chi_xx = 5.74        # LDA/cc-pVDZ H2O chi_xx from these runs (polarizability.dat is not in git)
         runs.append(dict(name=d.name, lam=lam, steps=cfg["steps"], freq=freq, amp=amp,
-                         lp=lp, up=up, resolved=resolved or lam == 0,
+                         lp=lp, up=up, resolved=resolved or lam == 0, chi_xx=chi_xx,
                          res=1 / (cfg["steps"] * cfg["timestep"] * 1e-15) / C_CM_S,
                          omega_c=cfg["omega_photon"][0] * 219474.63 if cfg.get("photons") else None))
     return sorted(runs, key=lambda r: r["lam"])
@@ -102,12 +112,12 @@ def load_campaign(campaign):
 
 # ── figures ───────────────────────────────────────────────────────────────────
 
-def plot_spectra(runs, out):
+def plot_spectra(runs, out, color_series=COLOR, fname="ir_spectra.png", series="χ neglected"):
     omega_c = next(r["omega_c"] for r in runs if r["omega_c"])
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 7), sharey=True,
                                    gridspec_kw=dict(width_ratios=[1.3, 1]))
     for i, r in enumerate(runs):
-        color = COLOR if r["lam"] > 0 else INK2
+        color = color_series if r["lam"] > 0 else INK2
         f, a = r["freq"], r["amp"]
         bend_max = a[(f > BEND_BAND[0]) & (f < BEND_BAND[1])].max()
         for ax, band, scale in ((ax1, BEND_BAND, 1), (ax2, HIGH_BAND, HIGH_SCALE)):
@@ -135,10 +145,10 @@ def plot_spectra(runs, out):
              color=INK2, va="top")
     ax1.set_ylabel("IR intensity (normalized to the bend, offset by λ)")
     fig.suptitle(rf"H₂O IR spectra in a cavity resonant with the bend ($\omega_c$ = {omega_c:.0f} cm⁻¹), "
-                 f"PySCF, {runs[0]['steps']} steps ({runs[0]['res']:.0f} cm⁻¹ resolution)",
+                 f"PySCF, {series}, {runs[0]['steps']} steps ({runs[0]['res']:.0f} cm⁻¹ resolution)",
                  fontsize=11, x=0.01, ha="left")
     fig.tight_layout()
-    fig.savefig(out / "ir_spectra.png", dpi=160)
+    fig.savefig(out / fname, dpi=160)
     plt.close(fig)
 
 
@@ -147,7 +157,11 @@ def _earlier_point(ax, value, label):
             label=label, zorder=4)
 
 
-def plot_branches(runs, out):
+def _chi_resolved(chi):
+    return [r for r in chi if r["resolved"] and r["lam"] > 0]
+
+
+def plot_branches(runs, out, chi=()):
     omega_c = next(r["omega_c"] for r in runs if r["omega_c"])
     bare = next(r for r in runs if r["lam"] == 0)
     fig, ax = plt.subplots(figsize=(7.5, 5.5))
@@ -163,13 +177,32 @@ def plot_branches(runs, out):
     if unres:
         ax.plot([r["lam"] for r in unres], [r["lp"] for r in unres], ls="none", marker=MARKER, ms=9,
                 mfc=SURFACE, mec=COLOR, mew=1.5, label="unresolved (splitting < resolution)", zorder=3)
+    cres = _chi_resolved(chi)
+    cdom = [r for r in chi if not r["resolved"] and r["lam"] > 0]
+    if cdom:
+        # chi on: the polarizability screens the cavity to omega_c / sqrt(1 + lam^2 chi_xx),
+        # red-detuning it; one polariton dominates and the other sits below the
+        # finite-length side lobes, so only the dominant peak is measurable here
+        ax.plot([r["lam"] for r in cdom], [r["lp"] for r in cdom], ls="none", marker=CHI_MARKER, ms=8,
+                mfc=SURFACE, mec=CHI_COLOR, mew=1.8, zorder=3,
+                label="χ included: dominant peak only (other polariton too weak at 800 steps)")
+        lam_s = np.linspace(0, 0.32, 100)
+        chi_xx = np.mean([r["chi_xx"] for r in cdom])
+        ax.plot(lam_s, omega_c / np.sqrt(1 + lam_s ** 2 * chi_xx), color=CHI_COLOR, lw=1, ls=":", zorder=1,
+                label=rf"screened cavity $\omega_c/\sqrt{{1+\lambda^2\chi_{{xx}}}}$ ($\chi_{{xx}}$ = {chi_xx:.1f} a.u.)")
+    for key in ("lp", "up"):
+        if cres:
+            ax.plot([0] + [r["lam"] for r in cres], [bare["lp"]] + [r[key] for r in cres],
+                    color=CHI_COLOR, lw=1.2, alpha=0.6, zorder=2)
+            ax.plot([r["lam"] for r in cres], [r[key] for r in cres], ls="none", marker=CHI_MARKER, ms=8,
+                    color=CHI_COLOR, mec=SURFACE, mew=2, label=CHI_LABEL if key == "lp" else None, zorder=3)
     _earlier_point(ax, EARLIER["lp"], "earlier run: 2000 steps, Hanning (runs/h2o/pyscf_cavity)")
     _earlier_point(ax, EARLIER["up"], None)
     ax.axhline(omega_c, color=INK2, lw=0.8, ls=":")
     ax.text(0.316, omega_c, r"$\omega_c$", color=INK2, fontsize=10, va="center")
     ax.text(0.305, res[-1]["up"], "UP", color=INK2, fontsize=10, va="center")
     ax.text(0.305, res[-1]["lp"], "LP", color=INK2, fontsize=10, va="center")
-    ax.legend(fontsize=8.5, loc="lower left")
+    ax.legend(fontsize=8, loc="lower left")
     ax.set_xlabel("Coupling strength λ (a.u.)")
     ax.set_ylabel("Polariton frequency (cm⁻¹)")
     ax.set_title("H₂O bend polariton branches vs coupling", loc="left", fontsize=11)
@@ -179,7 +212,7 @@ def plot_branches(runs, out):
     plt.close(fig)
 
 
-def plot_rabi(runs, out):
+def plot_rabi(runs, out, chi=()):
     fig, ax = plt.subplots(figsize=(7.5, 5))
     res = [r for r in runs if r["resolved"] and r["lam"] > 0]
     lam = np.array([r["lam"] for r in res])
@@ -191,6 +224,15 @@ def plot_rabi(runs, out):
     ax.text(0.31, runs[0]["res"] / 2, f"below resolution ({runs[0]['res']:.0f} cm⁻¹)",
             fontsize=8.5, color=INK2, ha="right", va="center")
     ax.plot(lam, rabi, ls="none", marker=MARKER, ms=9, color=COLOR, mec=SURFACE, mew=2, label=LABEL, zorder=3)
+    cres = _chi_resolved(chi)
+    if cres:
+        cl = np.array([r["lam"] for r in cres])
+        cr = np.array([r["up"] - r["lp"] for r in cres])
+        cs = (cl @ cr) / (cl @ cl)
+        ax.plot(x, cs * x, color=CHI_COLOR, lw=1, ls="--",
+                label=rf"linear fit, χ included: $\Omega_R$ ≈ {cs:.0f}·λ cm⁻¹", zorder=1)
+        ax.plot(cl, cr, ls="none", marker=CHI_MARKER, ms=8, color=CHI_COLOR, mec=SURFACE, mew=2,
+                label=CHI_LABEL, zorder=3)
     _earlier_point(ax, EARLIER["up"] - EARLIER["lp"], "earlier run: 2000 steps, Hanning (runs/h2o/pyscf_cavity)")
     ax.legend(fontsize=8.5, loc="upper left")
     ax.set_xlabel("Coupling strength λ (a.u.)")
@@ -207,7 +249,11 @@ def write_table(runs, out):
     with open(out / "peaks.csv", "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["run", "lambda", "steps", "resolution_cm-1", "resolved", "LP_cm-1", "UP_cm-1", "Rabi_cm-1"])
+        seen = set()
         for r in runs:
+            if r["name"] in seen:          # the bare run belongs to both series
+                continue
+            seen.add(r["name"])
             w.writerow([r["name"], r["lam"], r["steps"], f"{r['res']:.1f}", r["resolved"],
                         f"{r['lp']:.0f}", f"{r['up']:.0f}", f"{r['up'] - r['lp']:.0f}" if r["resolved"] else ""])
 
@@ -218,15 +264,22 @@ def main():
     campaign = Path(sys.argv[1]).resolve()
     out = REPO / "results" / "h2o" / campaign.name
     out.mkdir(parents=True, exist_ok=True)
-    runs = load_campaign(campaign)
+    runs = load_campaign(campaign, "nochi")
+    chi = load_campaign(campaign, "chi")
+    chi = chi if any(r["lam"] > 0 for r in chi) else []
     plot_spectra(runs, out)
-    plot_branches(runs, out)
-    plot_rabi(runs, out)
-    write_table(runs, out)
-    print(f"{LABEL}  ({runs[0]['res']:.0f} cm⁻¹ resolution)")
-    for r in runs:
-        tail = f"Ω_R {r['up'] - r['lp']:5.0f} cm⁻¹" if r["resolved"] and r["lam"] else ("bare bend" if not r["lam"] else "unresolved")
-        print(f"  λ = {r['lam']:<5g}  LP {r['lp']:6.0f}  UP {r['up']:6.0f}  {tail}")
+    if chi:
+        plot_spectra(chi, out, CHI_COLOR, "ir_spectra_chi.png", "χ included")
+    plot_branches(runs, out, chi)
+    plot_rabi(runs, out, chi)
+    write_table(runs + chi, out)
+    for label, series in ((LABEL, runs), (CHI_LABEL, chi)):
+        if not series:
+            continue
+        print(f"{label}  ({series[0]['res']:.0f} cm⁻¹ resolution)")
+        for r in series:
+            tail = f"Ω_R {r['up'] - r['lp']:5.0f} cm⁻¹" if r["resolved"] and r["lam"] else ("bare bend" if not r["lam"] else "unresolved")
+            print(f"  λ = {r['lam']:<5g}  LP {r['lp']:6.0f}  UP {r['up']:6.0f}  {tail}")
     print(f"\nwrote {out.relative_to(REPO)}/")
 
 

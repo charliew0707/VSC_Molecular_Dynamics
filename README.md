@@ -44,13 +44,22 @@ python scripts/plot_co2_sweep.py runs/co2/2026-10-02_lambda_sweep
 ω_c = 1584 cm⁻¹ (polarized along x, the molecule's C₂ axis), with λ = 0 to 0.3,
 using PySCF LDA/cc-pVDZ (χ neglected) at 800 steps (83 cm⁻¹ resolution). The
 splitting is linear in λ (Ω_R ≈ 1265·λ cm⁻¹), and λ = 0.1 reproduces the earlier
-2000-step result (125 cm⁻¹). λ = 0.05 is below resolution. Figures are in
+2000-step result (125 cm⁻¹). λ = 0.05 is below resolution.
+
+**With χ included** (`*_chi` runs, λ = 0.1–0.3), H₂O behaves like the group's CO₂
+χ-included benchmark. The polarizability (χ_xx ≈ 5.7 a.u.) screens the cavity
+to ω_c/√(1+λ²χ), red-detuning it (1541 → 1286 cm⁻¹ for λ = 0.1 → 0.3). One
+polariton dominates and falls from 1499 to 1218 cm⁻¹, just below the screened
+cavity frequency. The other branch is weaker than the finite-length side lobes
+at 800 steps, so the χ-on Rabi splitting isn't measurable here. Resolving it
+needs longer runs with a window, or the group's "resonant" variant that raises
+ω_c by √(1+λ²χ) to cancel the screening. Figures are in
 [`results/h2o/2026-10-02_lambda_sweep/`](results/h2o/2026-10-02_lambda_sweep/):
 
 ![H₂O polariton branches](results/h2o/2026-10-02_lambda_sweep/polariton_branches.png)
 
 ```bash
-bash scripts/campaigns/h2o_lambda_sweep.sh        # ~7 min
+bash scripts/campaigns/h2o_lambda_sweep.sh        # nochi ~7 min; chi1 + chi2 ~30 min
 python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep
 ```
 

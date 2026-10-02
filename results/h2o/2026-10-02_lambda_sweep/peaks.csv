@@ -6,3 +6,8 @@ pyscf_cav_w1584_lam0.15_nochi,0.15,800,83.4,True,1478,1666,187
 pyscf_cav_w1584_lam0.2_nochi,0.2,800,83.4,True,1447,1687,239
 pyscf_cav_w1584_lam0.25_nochi,0.25,800,83.4,True,1395,1718,323
 pyscf_cav_w1584_lam0.3_nochi,0.3,800,83.4,True,1353,1739,385
+pyscf_cav_w1584_lam0.1_chi,0.1,800,83.4,False,1499,1499,
+pyscf_cav_w1584_lam0.15_chi,0.15,800,83.4,False,1437,1437,
+pyscf_cav_w1584_lam0.2_chi,0.2,800,83.4,False,1364,1364,
+pyscf_cav_w1584_lam0.25_chi,0.25,800,83.4,False,1291,1291,
+pyscf_cav_w1584_lam0.3_chi,0.3,800,83.4,False,1218,1218,
