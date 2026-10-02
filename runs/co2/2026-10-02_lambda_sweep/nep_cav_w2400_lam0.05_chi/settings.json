@@ -1,0 +1,47 @@
+{
+    "steps": 10000,
+    "timestep": 0.04911347394232032,
+    "nphoton": 1,
+    "driver": "nep",
+    "polar": true,
+    "update_polar": true,
+    "nep_pot": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-energy.txt",
+    "nep_dip": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-dipole.txt",
+    "nep_pol": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-polar.txt",
+    "xyz_file": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/geometries/co2-disp.xyz",
+    "lambda_vector": [
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    "photons": true,
+    "omega_photon": [
+        0.010935204674909351
+    ],
+    "lambda_photon": [
+        0.05
+    ],
+    "dipole_unit": "au",
+    "polarizability_unit": "au",
+    "deltax": 0.001,
+    "polar_fd": "forward",
+    "mbpol_fd": "central",
+    "mbpol_dmu": "field",
+    "conv_tol": 1e-06,
+    "xc": "lda,vwn",
+    "basis": "ccpvdz",
+    "scf_warmstart": true,
+    "emode_projection": true,
+    "cboa_mode": "e-mode",
+    "analytic_nuclear_gradient": true,
+    "qa0": [
+        0.0
+    ],
+    "pa0": [
+        0.0
+    ],
+    "polar_force": true,
+    "polar_gradient_analytic": false
+}

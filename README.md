@@ -20,14 +20,32 @@ Flick Group Code/
 | CO₂ | Asymmetric C–O stretch (~2349 cm⁻¹) | ~420 cm⁻¹ |
 | H₂O | Bend (~1580 cm⁻¹) | 125 cm⁻¹ |
 
+### CO₂ λ sweep (benchmark reproduction)
+
+`runs/co2/2026-10-02_lambda_sweep/` is the CO₂ asymmetric stretch in a cavity at
+ω_c = 2400 cm⁻¹ with λ = 0 to 0.3, using NEP (χ included and neglected) and PySCF
+(χ neglected). Every NEP point reproduces the group benchmark
+(`polaritonic_deep_md/tests/e2e/compare_with_bonini2024`) to the frequency bin.
+The figures and a peak table are in
+[`results/co2/2026-10-02_lambda_sweep/`](results/co2/2026-10-02_lambda_sweep/):
+
+![CO₂ polariton branches](results/co2/2026-10-02_lambda_sweep/polariton_branches.png)
+
+To re-run and re-plot:
+
+```bash
+bash scripts/campaigns/co2_lambda_sweep.sh        # nep | pyscf | all (default)
+python scripts/plot_co2_sweep.py runs/co2/2026-10-02_lambda_sweep
+```
+
 ## Layout
 
 | Folder        | What goes in it |
 |---------------|-----------------|
 | `geometries/` | Input structures (`.xyz`) |
-| `runs/`       | One folder per run: `runs/<molecule>/<run-name>/` with its `in.json` and outputs |
+| `runs/`       | One folder per run, `runs/<molecule>/[<campaign>/]<run-name>/`, with its `in.json` and outputs |
 | `configs/`    | Run presets (defaults, molecules, drivers) used by `scripts/run.py` |
-| `scripts/`    | `run.py` launcher, analysis and plotting scripts |
+| `scripts/`    | `run.py` launcher, `campaigns/` sweep scripts, analysis and plotting scripts |
 | `results/`    | Figures produced from runs |
 | `reports/`    | Write-ups (`vsc_report.tex`, PDFs) |
 | `docs/`       | Guide and notes |
@@ -35,6 +53,7 @@ Flick Group Code/
 
 ### Runs so far
 
+- `runs/co2/2026-10-02_lambda_sweep/`: CO₂ λ sweep, NEP + PySCF (see above)
 - `runs/co2/{ff,nep,pyscf}`: CO₂ force-backend comparison (FF vs PySCF vs NEP dipoles)
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)

@@ -1,0 +1,11 @@
+{
+    "command": "run.py co2 nep --cavity --omega 2400 --lam 0.02 0.05 0.1 0.13 0.17 0.2 0.25 0.3 --steps 10000 --campaign 2026-10-02_lambda_sweep --name chi",
+    "started": "2026-10-02T14:23:42",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "polaritonic_deep_md": {
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}

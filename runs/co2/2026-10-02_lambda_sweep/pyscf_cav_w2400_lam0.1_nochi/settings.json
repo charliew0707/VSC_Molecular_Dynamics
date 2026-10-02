@@ -1,0 +1,44 @@
+{
+    "steps": 800,
+    "timestep": 0.04911347394232032,
+    "nphoton": 1,
+    "driver": "pyscf",
+    "xc": "lda,vwn",
+    "basis": "ccpvdz",
+    "polar": false,
+    "xyz_file": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/geometries/co2-disp.xyz",
+    "lambda_vector": [
+        [
+            1,
+            0,
+            0
+        ]
+    ],
+    "photons": true,
+    "omega_photon": [
+        0.010935204674909351
+    ],
+    "lambda_photon": [
+        0.1
+    ],
+    "dipole_unit": "au",
+    "polarizability_unit": "au",
+    "deltax": 0.001,
+    "polar_fd": "forward",
+    "mbpol_fd": "central",
+    "mbpol_dmu": "field",
+    "conv_tol": 1e-06,
+    "scf_warmstart": true,
+    "emode_projection": true,
+    "cboa_mode": "e-mode",
+    "analytic_nuclear_gradient": true,
+    "qa0": [
+        0.0
+    ],
+    "pa0": [
+        0.0
+    ],
+    "update_polar": true,
+    "polar_force": true,
+    "polar_gradient_analytic": false
+}

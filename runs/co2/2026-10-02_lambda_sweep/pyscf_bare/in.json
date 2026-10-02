@@ -1,0 +1,11 @@
+{
+    "steps": 800,
+    "timestep": 0.5,
+    "nphoton": 1,
+    "driver": "pyscf",
+    "xc": "lda,vwn",
+    "basis": "ccpvdz",
+    "polar": false,
+    "xyz_file": "/Users/charleswade/Flick Group Code/VSC_Molecular_Dynamics/geometries/co2-disp.xyz",
+    "photons": false
+}

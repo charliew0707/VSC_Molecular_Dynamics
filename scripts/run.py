@@ -12,10 +12,12 @@ Examples:
     python scripts/run.py co2 nep --cavity --lam 0.05 0.1 0.2   # coupling sweep
     python scripts/run.py co2 ff --steps 20 --dry-run     # just show in.json
     python scripts/run.py co2 pyscf --set basis=augccpvdz --name bigbasis
+    python scripts/run.py co2 nep --cavity --lam 0.1 0.2 --campaign 2026-10-02_sweep
 """
 
 import argparse
 import datetime
+import gzip
 import json
 import os
 import platform
@@ -104,7 +106,8 @@ def build_input(args, lam):
 
 
 def run_dir_name(args, lam, omega_cm):
-    parts = [datetime.date.today().isoformat(), args.driver]
+    # Inside a campaign folder the date lives on the campaign, not each run
+    parts = [args.driver] if args.campaign else [datetime.date.today().isoformat(), args.driver]
     if args.cavity:
         parts += ["cav", f"w{omega_cm:g}", f"lam{lam:g}"]
     if args.name:
@@ -126,6 +129,7 @@ def main():
     ap.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
                     help="override any in.json key, e.g. --set basis=augccpvdz")
     ap.add_argument("--name", help="extra tag appended to the run folder name")
+    ap.add_argument("--campaign", help="group runs under runs/<molecule>/<campaign>/ (e.g. a sweep)")
     ap.add_argument("--no-ir", action="store_true", help="skip the infrared spectrum step")
     ap.add_argument("--dry-run", action="store_true", help="print in.json and folder, don't run")
     args = ap.parse_args()
@@ -133,7 +137,7 @@ def main():
     lams = args.lam if args.cavity else [None]
     for lam in lams:
         jdata, omega_cm = build_input(args, lam)
-        run_dir = REPO / "runs" / args.molecule / run_dir_name(args, lam, omega_cm)
+        run_dir = REPO / "runs" / args.molecule / (args.campaign or "") / run_dir_name(args, lam, omega_cm)
 
         print(f"\n=== {run_dir.relative_to(REPO)}")
         if args.dry_run:
@@ -165,6 +169,10 @@ def main():
                     log.write(line)
                 if proc.wait() != 0:
                     sys.exit(f"{cmd[0]} failed (exit {proc.returncode}); see {run_dir}/run.log")
+        # Compressed copies are what git keeps (see .gitignore); the full outputs stay on disk
+        for name in ("dipole.dat", "energy.dat"):
+            with open(run_dir / name, "rb") as src, gzip.open(run_dir / f"{name}.gz", "wb") as dst:
+                dst.write(src.read())
         print(f"done -> {run_dir.relative_to(REPO)}")
 
 

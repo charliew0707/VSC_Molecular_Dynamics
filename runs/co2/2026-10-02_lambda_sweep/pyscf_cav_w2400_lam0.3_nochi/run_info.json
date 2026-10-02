@@ -1,0 +1,11 @@
+{
+    "command": "run.py co2 pyscf --cavity --omega 2400 --lam 0.3 --steps 800 --campaign 2026-10-02_lambda_sweep --name nochi",
+    "started": "2026-10-02T14:59:06",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "polaritonic_deep_md": {
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}

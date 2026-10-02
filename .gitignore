@@ -19,15 +19,15 @@ __pycache__/
 *.synctex.gz
 *.fdb_latexmk
 *.fls
-!runs/**/md.log
-!runs/**/run.log
 
 # Put large trajectories/checkpoints (>~50 MB) here so they stay local
 large/
 
-# Big per-step MD outputs: kept on disk, not pushed to GitHub.
-# (dipole/energy/photon/polarizability .dat, spectra, in.json and run_info.json ARE committed)
-runs/**/md.traj
-runs/**/force.dat
-runs/**/force_bare.dat
-runs/**/position.dat
+# Run outputs: everything stays on disk; git keeps only inputs/metadata
+# (in.json, settings.json, run_info.json) and the compressed dipole.dat.gz +
+# energy.dat.gz that run.py writes, which is enough to regenerate spectra and plots.
+# (Runs committed before 2026-10-02 still have their .dat files tracked.)
+runs/**/*.dat
+runs/**/*.traj
+runs/**/*.log
+runs/**/velocities.xyz

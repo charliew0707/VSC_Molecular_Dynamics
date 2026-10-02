@@ -90,6 +90,7 @@ python scripts/run.py <molecule> <driver> [options]
 | `--dt T` | timestep in fs | `0.5` |
 | `--set KEY=VALUE` | override any `in.json` key (repeatable) | none |
 | `--name TAG` | append a tag to the folder name | none |
+| `--campaign NAME` | put the run in `runs/<molecule>/NAME/` (for sweeps; drops the date from each run name) | none |
 | `--dry-run` | print `in.json` and folder name only | off |
 | `--no-ir` | don't run `infrared` afterwards | off |
 
@@ -147,6 +148,7 @@ run on the same day, give it a `--name`.
 | `md.traj` | ASE trajectory: open with `ase gui md.traj` or `ase.io.read` | |
 | `velocities.xyz` | final velocities | |
 | `spectrum_ase.dat` | **IR spectrum**: col 1 = frequency (cm⁻¹), col 2 = intensity | cm⁻¹, arb. |
+| `dipole.dat.gz`, `energy.dat.gz` | compressed copies (what git keeps; `np.loadtxt` reads them directly) | |
 
 Load any `.dat` with `np.loadtxt("dipole.dat")`. Lines starting with `#` are
 skipped automatically.
@@ -154,6 +156,38 @@ skipped automatically.
 ---
 
 ## 5. Analysis and figures
+
+### Sweeps (campaigns)
+
+A campaign is a set of related runs in one folder, with a script that re-creates
+it and a script that plots it. The first one is the CO₂ λ sweep:
+
+```bash
+bash scripts/campaigns/co2_lambda_sweep.sh nep     # 17 NEP runs, ~15 min
+bash scripts/campaigns/co2_lambda_sweep.sh pyscf   # 5 PySCF runs in parallel, ~23 min
+python scripts/plot_co2_sweep.py runs/co2/2026-10-02_lambda_sweep
+```
+
+`plot_co2_sweep.py` writes to `results/co2/<campaign>/`:
+
+| File | Shows |
+|---|---|
+| `ir_spectra.png` | stacked IR spectra vs λ, one panel per series, LP/UP marked |
+| `polariton_branches.png` | LP and UP vs λ, overlaid on the group benchmark (NEP) and the QEDFT reference |
+| `rabi_splitting.png` | Ω_R = UP − LP vs λ, with the same references |
+| `peaks.csv` | every run's LP, UP, Ω_R and frequency resolution |
+
+Peaks are found exactly as in the group benchmark: the two strongest maxima in
+1200–3300 cm⁻¹ of the dipole_x spectrum. Runs are grouped into series by folder
+name (`*_chi`, `*_nochi`, `*_bare`), and the bare run is λ = 0 for each series.
+Incomplete runs are skipped with a message.
+
+For a new sweep, copy `scripts/campaigns/co2_lambda_sweep.sh` and change the
+`CAMPAIGN` name and λ values.
+
+**Long PySCF runs:** if Claude starts them, they get stopped after about 30 minutes.
+Keep each batch under that, or run longer batches yourself in a terminal you
+leave open.
 
 - Write analysis scripts in `scripts/` and point them at run folders. For example,
   `scripts/compare_bend_hanning.py` compares a bare and a cavity spectrum:
@@ -261,13 +295,15 @@ git commit -m "H2O cavity run lambda=0.1"
 git push
 ```
 
-- **Automatically skipped:** `.gitignore` leaves out each run's `md.traj`,
-  `force.dat`, `force_bare.dat` and `position.dat`. These are the big per-step
-  files; a 10,000-step run is about 35 MB of them. They stay on your laptop, and
-  everything needed for spectra and plots (`dipole.dat`, `energy.dat`,
-  `photon.dat`, `polarizability.dat`, `spectrum_ase.dat`, `in.json`,
-  `run_info.json`) is still committed. To push one on purpose:
-  `git add -f runs/.../md.traj`.
+- **What git keeps from a run:** `in.json`, `settings.json`, `run_info.json`,
+  and `dipole.dat.gz` + `energy.dat.gz`, compressed copies that `run.py` writes
+  when a run finishes. That's enough to regenerate every spectrum, peak and plot
+  from a fresh clone (the plot scripts read the `.gz` files when the `.dat` files
+  are missing). A 10,000-step run is about 0.5 MB in git instead of about 10 MB.
+- **What stays only on your laptop:** all full `.dat` outputs, `md.traj`,
+  `run.log` / `md.log` and `velocities.xyz` (`.gitignore` skips them under
+  `runs/`). Nothing is deleted. To push one on purpose, use `git add -f <file>`.
+- Runs committed before 2026-10-02 keep their older, fuller set of tracked files.
 - **Commit:** run folders with small outputs, figures, scripts, configs and reports.
 - **Don't commit** anything over about 50 MB (GitHub blocks files over 100 MB).
   Move big trajectories to `large/` and keep only the `.dat` files and
