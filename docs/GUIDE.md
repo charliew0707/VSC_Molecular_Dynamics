@@ -189,6 +189,12 @@ PySCF only). It uses a zero-padded, unwindowed FFT with a 50% height rule for
 calling a split (see the script's docstring), because H₂O splittings are close to
 the 800-step resolution.
 
+**Energy check:** before trusting a new set of runs, run
+`python scripts/check_energy.py runs/<molecule>/<campaign>`. It reports how well the
+total energy (molecule + cavity) is conserved. ~1% fluctuation and < 0.5% drift is
+good. All 29 runs from 2026-10-02 pass at the 0.5 fs timestep. md.log's `Etot`
+does *not* include the cavity energy, so don't judge conservation from md.log alone.
+
 For a new sweep, copy `scripts/campaigns/co2_lambda_sweep.sh` and change the
 `CAMPAIGN` name and λ values.
 
