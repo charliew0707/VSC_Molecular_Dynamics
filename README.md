@@ -54,6 +54,24 @@ bash scripts/campaigns/h2o_lambda_sweep.sh        # ~7 min
 python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep
 ```
 
+### H₂O single-molecule checks (2026-10-02)
+
+These were run before the 2–3 molecule work, at λ = 0.3 with 800 steps
+(`scripts/campaigns/h2o_checks.sh`, plots from `scripts/plot_h2o_checks.py` in
+[`results/h2o/2026-10-02_checks/`](results/h2o/2026-10-02_checks/)):
+
+- **Energy conservation:** all runs conserve molecule + cavity energy at
+  dt = 0.5 fs (`scripts/check_energy.py`).
+- **Detuning:** there's a clear anti-crossing as ω_c is swept from 1300 to
+  1850 cm⁻¹. Quantitatively, the polaritons sit about 40–60 cm⁻¹ below simple
+  coupled-oscillator models. This is open: it could be anharmonicity, the
+  starting amplitude, or the e-mode formulation.
+- **Orientation:** this is *not* a clean cos θ test for H₂O. With the
+  polarization tilted out of the molecular plane, the cavity field torques
+  H₂O's permanent dipole and **the molecule rotates** (49° at θ = 30°, 113° at
+  θ = 60° within 400 fs). The splitting is unaffected at θ = 0° and vanishes at
+  θ = 90°. Free molecules won't keep their orientation in a multi-molecule cavity.
+
 ## Layout
 
 | Folder        | What goes in it |
@@ -71,6 +89,7 @@ python scripts/plot_h2o_sweep.py runs/h2o/2026-10-02_lambda_sweep
 
 - `runs/co2/2026-10-02_lambda_sweep/`: CO₂ λ sweep, NEP + PySCF (see above)
 - `runs/h2o/2026-10-02_lambda_sweep/`: H₂O λ sweep, PySCF (see above)
+- `runs/h2o/2026-10-02_{orientation,detuning}/`: H₂O single-molecule checks (see above)
 - `runs/co2/{ff,nep,pyscf}`: CO₂ force-backend comparison (FF vs PySCF vs NEP dipoles)
 - `runs/co2/2026-06-09_pyscf_test`, `runs/co2/co2_test_001`: early PySCF cavity test runs
 - `runs/h2o/pyscf`, `runs/h2o/pyscf_cavity`: H₂O bare vs cavity spectra (bend Rabi splitting)

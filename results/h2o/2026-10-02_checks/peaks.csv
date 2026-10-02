@@ -1,0 +1,14 @@
+check,run,theta_deg,omega_c_cm-1,LP_cm-1,UP_cm-1,Rabi_cm-1
+orientation,pyscf_cav_w1584_lam0.3_th0,0,1584,1353,1739,385
+orientation,pyscf_cav_w1584_lam0.3_th30,30,1584,1385,1759,375
+orientation,pyscf_cav_w1584_lam0.3_th45,45,1584,1312,1770,458
+orientation,pyscf_cav_w1584_lam0.3_th60,60,1584,1416,1510,94
+orientation,pyscf_cav_w1584_lam0.3_th75,75,1584,1582,1759,177
+orientation,pyscf_cav_w1584_lam0.3_th90,90,1584,,,unresolved
+detuning,pyscf_cav_w1300_lam0.3_detune,0,1300,1187,1593,406
+detuning,pyscf_cav_w1400_lam0.3_detune,0,1400,1249,1635,385
+detuning,pyscf_cav_w1500_lam0.3_detune,0,1500,1301,1687,385
+detuning,pyscf_cav_w1584_lam0.3_detune,0,1584,1353,1739,385
+detuning,pyscf_cav_w1650_lam0.3_detune,0,1650,1385,1780,396
+detuning,pyscf_cav_w1750_lam0.3_detune,0,1750,1426,1874,448
+detuning,pyscf_cav_w1850_lam0.3_detune,0,1850,1468,1947,479
