@@ -11,8 +11,10 @@ and is only *used* from here.
 └── VSC_Molecular_Dynamics/   # this repo (GitHub charliew0707)
 ```
 
-`README.md` has the results and `docs/GUIDE.md` is the full user guide. Keep both
-updated when you add a campaign or change the workflow.
+`README.md` only says what the repo is and how it's organised. It should NOT need
+editing when runs are added, so don't put results or how-to steps in it. How-to lives in
+`docs/GUIDE.md` (update it when the workflow changes); findings go in dated `reports/`
+and `results/<mol>/<campaign>/peaks.csv`.
 
 ## Hard rules
 
