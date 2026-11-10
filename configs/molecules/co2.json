@@ -1,11 +1,11 @@
 {
-    "_comment": "CO2 single molecule. Cavity tuned to the asymmetric C=O stretch. NEP models are the CO2 ones committed in the shared repo (tests/e2e/no-polar/mlip/models, added by J. Flick 2026-06-15).",
+    "_comment": "CO2 single molecule. Cavity tuned to the asymmetric C=O stretch. NEP models are the CO2 ones in the group code's tests/e2e/no-polar/mlip/models ({code} = the chosen code's repo; the files are identical in cboamd and polaritonic_deep_md).",
     "xyz_file": "geometries/co2-disp.xyz",
     "omega_cm": 2430,
     "lambda_vector": [[1, 0, 0]],
     "nep": {
-        "nep_pot": "../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-energy.txt",
-        "nep_dip": "../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-dipole.txt",
-        "nep_pol": "../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-polar.txt"
+        "nep_pot": "{code}/tests/e2e/no-polar/mlip/models/nep-energy.txt",
+        "nep_dip": "{code}/tests/e2e/no-polar/mlip/models/nep-dipole.txt",
+        "nep_pol": "{code}/tests/e2e/no-polar/mlip/models/nep-polar.txt"
     }
 }

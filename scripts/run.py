@@ -1,10 +1,15 @@
 """
-Launch a polaritonic_deep_md (cboamd) run from presets in configs/.
+Launch a cavity MD run of the group code from presets in configs/.
+
+The code is chosen with --code (see configs/codes.json): "cboamd" (the public
+release, default) or "pdm" (polaritonic_deep_md, used for all runs before
+2026-11-10). Each has its own clone next to this repo and its own conda env;
+run.py uses that env's `cboamd`/`infrared`, whatever Python started it.
 
 Builds in.json from  configs/defaults.json + configs/molecules/<mol>.json
 + configs/drivers/<driver>.json + command-line options, makes a fresh folder
 under runs/<mol>/, records run_info.json (shared-repo commit, command, date),
-then runs `cboamd` and `infrared` inside it. The shared repo is never touched.
+then runs `cboamd` and `infrared` inside it. The code repos are never touched.
 
 Examples:
     python scripts/run.py h2o pyscf                       # no cavity
@@ -13,6 +18,7 @@ Examples:
     python scripts/run.py co2 ff --steps 20 --dry-run     # just show in.json
     python scripts/run.py co2 pyscf --set basis=augccpvdz --name bigbasis
     python scripts/run.py co2 nep --cavity --lam 0.1 0.2 --campaign 2026-10-02_sweep
+    python scripts/run.py h2o pyscf --cavity --lam 0.1 --code pdm   # old code
 """
 
 import argparse
@@ -28,7 +34,6 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 CONFIGS = REPO / "configs"
-SHARED = REPO.parent / "polaritonic_deep_md"
 CM_PER_AU = 219474.63  # 1 hartree in cm^-1
 
 
@@ -49,25 +54,35 @@ def parse_value(text):
         return text
 
 
-def shared_commit():
+def code_info(name):
+    """Repo folder, env and allowed drivers for a code in configs/codes.json."""
+    codes = load(CONFIGS / "codes.json")
+    info = {k: v for k, v in codes[name].items() if not k.startswith("_")}
+    info["name"] = name
+    info["repo"] = (REPO / info["repo"]).resolve()
+    return info
+
+
+def code_commit(code):
     def git(*args):
-        return subprocess.run(["git", "-C", str(SHARED), *args],
+        return subprocess.run(["git", "-C", str(code["repo"]), *args],
                               capture_output=True, text=True).stdout.strip()
-    return {"commit": git("rev-parse", "--short", "HEAD"),
+    return {"name": code["name"], "repo": str(code["repo"]), "env": code["env"],
+            "commit": git("rev-parse", "--short", "HEAD"),
             "date": git("log", "-1", "--format=%ci"),
             "uncommitted_changes": bool(git("status", "--porcelain", "--untracked-files=no"))}
 
 
-def tool(name):
-    """Use the cboamd/infrared that belong to this Python, not whatever is on PATH."""
-    exe = Path(sys.executable).parent / name
+def tool(code, name):
+    """Use the cboamd/infrared from the chosen code's env, not whatever is on PATH."""
+    exe = Path(code["env"]) / "bin" / name
     if not exe.exists():
-        sys.exit(f"'{name}' not found next to {sys.executable}. Is polaritonic_deep_md "
-                 f"installed in this environment? (pip install -e \"{SHARED}\")")
+        sys.exit(f"'{name}' not found in {code['env']}/bin. Is {code['repo'].name} installed "
+                 f"there? (pip install -e \"{code['repo']}\")")
     return str(exe)
 
 
-def build_input(args, lam):
+def build_input(args, lam, code):
     mol = load(CONFIGS / "molecules" / f"{args.molecule}.json")
     jdata = load(CONFIGS / "defaults.json")
     jdata.update(load(CONFIGS / "drivers" / f"{args.driver}.json"))
@@ -97,7 +112,10 @@ def build_input(args, lam):
 
     # Paths in configs are relative to the repo; store them absolute so the run
     # folder works no matter where cboamd is started from.
+    # "{code}" means the chosen code's repo (e.g. its bundled NEP models).
     for key in ("xyz_file", "nep_pot", "nep_dip", "nep_pol", "dp_pot", "dp_dip", "dp_pol"):
+        if isinstance(jdata.get(key), str):
+            jdata[key] = jdata[key].replace("{code}", str(code["repo"]))
         if isinstance(jdata.get(key), str) and not os.path.isabs(jdata[key]):
             jdata[key] = str(REPO / jdata[key])
             if not Path(jdata[key]).exists():
@@ -120,6 +138,9 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("molecule", choices=choices("molecules"))
     ap.add_argument("driver", choices=choices("drivers"))
+    ap.add_argument("--code", choices=[k for k in load(CONFIGS / "codes.json") if k != "default"],
+                    default=load(CONFIGS / "codes.json")["default"],
+                    help="which group code to run (configs/codes.json; default: %(default)s)")
     ap.add_argument("--cavity", action="store_true", help="couple to the cavity mode")
     ap.add_argument("--lam", type=float, nargs="+", default=[0.05],
                     help="coupling strength(s); several values = one run each")
@@ -133,13 +154,17 @@ def main():
     ap.add_argument("--no-ir", action="store_true", help="skip the infrared spectrum step")
     ap.add_argument("--dry-run", action="store_true", help="print in.json and folder, don't run")
     args = ap.parse_args()
+    code = code_info(args.code)
+    if args.driver not in code["drivers"]:
+        sys.exit(f"driver '{args.driver}' is not available in --code {args.code} "
+                 f"(has: {', '.join(code['drivers'])}).")
 
     lams = args.lam if args.cavity else [None]
     for lam in lams:
-        jdata, omega_cm = build_input(args, lam)
+        jdata, omega_cm = build_input(args, lam, code)
         run_dir = REPO / "runs" / args.molecule / (args.campaign or "") / run_dir_name(args, lam, omega_cm)
 
-        print(f"\n=== {run_dir.relative_to(REPO)}")
+        print(f"\n=== {run_dir.relative_to(REPO)}   [code: {args.code}]")
         if args.dry_run:
             print(json.dumps(jdata, indent=4))
             continue
@@ -154,11 +179,11 @@ def main():
                        "started": datetime.datetime.now().isoformat(timespec="seconds"),
                        "host": platform.node(),
                        "python": sys.executable,
-                       "polaritonic_deep_md": shared_commit()}, f, indent=4)
+                       "code": code_commit(code)}, f, indent=4)
 
-        steps = [[tool("cboamd"), "-i", "in.json"]]
+        steps = [[tool(code, "cboamd"), "-i", "in.json"]]
         if not args.no_ir:
-            steps.append([tool("infrared"), "-m", "ase"])
+            steps.append([tool(code, "infrared"), "-m", "ase"])
         with open(run_dir / "run.log", "w") as log:
             for cmd in steps:
                 print("$", " ".join(Path(c).name if i == 0 else c for i, c in enumerate(cmd)))
@@ -174,6 +199,9 @@ def main():
             with open(run_dir / name, "rb") as src, gzip.open(run_dir / f"{name}.gz", "wb") as dst:
                 dst.write(src.read())
         print(f"done -> {run_dir.relative_to(REPO)}")
+    if not args.dry_run:
+        # keep the run -> code table (runs/CODES.md) current
+        subprocess.run([sys.executable, str(REPO / "scripts" / "list_codes.py")])
 
 
 if __name__ == "__main__":

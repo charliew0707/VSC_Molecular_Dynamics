@@ -5,13 +5,16 @@ cavity Born–Oppenheimer molecular dynamics of molecules (CO₂, H₂O, …) co
 optical cavity mode. It stores the inputs, raw data, analysis, figures and reports from
 those simulations.
 
-The simulations themselves use the Flick group's shared code,
-[`polaritonic_deep_md`](https://github.com/flickgroup/polaritonic_deep_md). That code
-is **not** copied or modified here. It sits next to this repo and is only used from it:
+The simulations themselves use the Flick group's code: the public release
+[`cboamd`](https://github.com/flickgroup/cboamd), and for runs before 2026-11-10 the
+development repo [`polaritonic_deep_md`](https://github.com/flickgroup/polaritonic_deep_md).
+Each run's `run_info.json` says which. That code is **not** copied or modified here. It
+sits next to this repo and is only used from it:
 
 ```
 Flick Group Code/
-├── polaritonic_deep_md/      # shared group code, read-only (just `git pull`)
+├── cboamd/                   # public group code, read-only (just `git pull`)
+├── polaritonic_deep_md/      # group development code, read-only
 └── VSC_Molecular_Dynamics/   # this repo
 ```
 

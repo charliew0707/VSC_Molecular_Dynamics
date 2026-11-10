@@ -1,0 +1,14 @@
+{
+    "command": "run.py h2o pyscf --cavity --lam 0.1 --steps 800 --campaign 2026-11-10_code_check --name nochi",
+    "started": "2026-11-10T14:29:37",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "code": {
+        "name": "cboamd",
+        "repo": "/Users/charleswade/Flick Group Code/cboamd",
+        "env": "/opt/anaconda3/envs/cboamd_public",
+        "commit": "89bc6dd",
+        "date": "2026-09-21 09:31:56 -0400",
+        "uncommitted_changes": false
+    }
+}

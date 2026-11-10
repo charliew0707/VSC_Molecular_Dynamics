@@ -1,0 +1,16 @@
+{
+    "_comment": "Which group code run.py uses (--code NAME; default below). Each code has its own clone next to this repo and its own conda env, because both install a package and commands named 'cboamd'. In config paths, {code} means that code's repo folder.",
+    "default": "cboamd",
+    "cboamd": {
+        "_comment": "Public release, github.com/flickgroup/cboamd (the paper's code). No 'ff' driver.",
+        "repo": "../cboamd",
+        "env": "/opt/anaconda3/envs/cboamd_public",
+        "drivers": ["pyscf", "nep", "deepmd"]
+    },
+    "pdm": {
+        "_comment": "Group development repo polaritonic_deep_md; all runs before 2026-11-10 used this.",
+        "repo": "../polaritonic_deep_md",
+        "env": "/opt/anaconda3/envs/vsc",
+        "drivers": ["pyscf", "nep", "deepmd", "ff"]
+    }
+}

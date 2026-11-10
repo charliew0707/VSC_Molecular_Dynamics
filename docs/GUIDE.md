@@ -1,7 +1,17 @@
 # Running VSC simulations: a guide
 
-How to run cavity MD with the Flick group's `polaritonic_deep_md` code from this
-repo: where everything lives, where results are saved, and what to watch out for.
+How to run cavity MD with the Flick group's code from this repo: where everything
+lives, where results are saved, and what to watch out for.
+
+Since 2026-11-10 the default code is the public release
+[`cboamd`](https://github.com/flickgroup/cboamd) (the code from Li, Car & Flick,
+arXiv:2609.22022), and it stays the default for all new runs. The group development
+repo `polaritonic_deep_md`, used for every run before that date, is still installed
+and can be chosen with `--code pdm` (e.g. to reproduce an old run, or for `ff`).
+
+**Which code made which run:** every run's `run_info.json` has a `code` block (name,
+repo, commit). `runs/CODES.md` lists every run with its code; `run.py` refreshes it
+after each run, or run `python scripts/list_codes.py`.
 
 ---
 
@@ -9,9 +19,11 @@ repo: where everything lives, where results are saved, and what to watch out for
 
 ```
 ~/Flick Group Code/
-├── polaritonic_deep_md/          ← SHARED group code. Read-only: only ever `git pull`.
+├── cboamd/                       ← PUBLIC group code (default). Read-only: only `git pull`.
+├── polaritonic_deep_md/          ← group development code (--code pdm). Read-only too.
 └── VSC_Molecular_Dynamics/       ← YOUR repo: inputs, runs, data, plots, reports.
     ├── configs/                  ← presets that run.py combines into in.json
+    │   ├── codes.json            ←   which code/env each --code uses, and the default
     │   ├── defaults.json         ←   steps, timestep, nphoton
     │   ├── molecules/co2.json    ←   geometry, cavity frequency (cm⁻¹), polarization
     │   ├── molecules/h2o.json
@@ -33,15 +45,33 @@ in `VSC_Molecular_Dynamics`.
 
 ## 2. One-time setup (already done on this laptop)
 
+Each code has its **own conda environment**, because both install a package and
+commands called `cboamd` / `infrared`; installing both into one environment would
+make one silently replace the other.
+
+| `--code` | Code folder | Conda env | Notes |
+|---|---|---|---|
+| `cboamd` (default) | `../cboamd` | `cboamd_public` | public release; drivers `pyscf`, `nep`, `deepmd` |
+| `pdm` | `../polaritonic_deep_md` | `vsc` | development repo; also has the `ff` driver |
+
+How they were made:
+
 ```bash
 cd ~/"Flick Group Code/VSC_Molecular_Dynamics"
-conda env create -f environment.yml
+conda env create -f environment.yml          # the vsc env
 conda activate vsc
 pip install -e ../polaritonic_deep_md
+
+git clone https://github.com/flickgroup/cboamd.git ../cboamd
+conda create -n cboamd_public --clone vsc    # same packages as vsc
+/opt/anaconda3/envs/cboamd_public/bin/pip install --no-deps -e ../cboamd
 ```
 
-`pip install -e` *links* the shared code into the environment instead of copying
-it, so a `git pull` there takes effect immediately with no reinstall.
+`pip install -e` *links* the code into the environment instead of copying it, so a
+`git pull` takes effect immediately with no reinstall. You always start `run.py`
+from `vsc`; it calls `cboamd` and `infrared` from the chosen code's environment
+itself (listed in `configs/codes.json`). The older envs `cboamd` and `cboamd_clean`
+are earlier setups and aren't used by `run.py`.
 
 Don't use the base Anaconda environment. Its scipy is broken and `cboamd`
 crashes on import.
@@ -74,6 +104,7 @@ python scripts/run.py <molecule> <driver> [options]
 | Longer run, better spectral resolution | `python scripts/run.py h2o pyscf --cavity --lam 0.1 --steps 8000` |
 | Different DFT basis/functional | `python scripts/run.py h2o pyscf --set basis=augccpvdz --set xc=pbe` |
 | Label a run | `... --name first_try` |
+| Use the old development code | `... --code pdm` |
 | Check the input without running | `... --dry-run` |
 | Skip the IR spectrum step | `... --no-ir` |
 
@@ -83,6 +114,7 @@ python scripts/run.py <molecule> <driver> [options]
 |---|---|---|
 | `molecule` | a file in `configs/molecules/` (`co2`, `h2o`) | required |
 | `driver` | a file in `configs/drivers/` (`pyscf`, `nep`, `ff`) | required |
+| `--code NAME` | which group code to run: `cboamd` or `pdm` (`configs/codes.json`) | `cboamd` |
 | `--cavity` | turn photons on | off |
 | `--lam L [L ...]` | coupling strength(s) λ in a.u.; several values → several runs | `0.05` |
 | `--omega W` | cavity frequency in **cm⁻¹** | molecule preset (CO₂ 2430, H₂O 1584) |
@@ -101,7 +133,7 @@ python scripts/run.py <molecule> <driver> [options]
 
 | Driver | What it is | Speed | Works for |
 |---|---|---|---|
-| `ff` | built-in classical CO₂ force field | seconds | **CO₂ only** |
+| `ff` | built-in classical CO₂ force field | seconds | **CO₂ only**, and only with `--code pdm` |
 | `pyscf` | DFT on the fly (LDA / cc-pVDZ by default) | minutes to hours | any molecule |
 | `nep` | trained neural-network potential | fast (200 cavity steps ≈ 1 s) | only where a model exists: CO₂ (see §7) |
 
@@ -134,7 +166,7 @@ run on the same day, give it a `--name`.
 | File | Contents | Units |
 |---|---|---|
 | `in.json` | exact input given to `cboamd` | |
-| `run_info.json` | command used, start time, machine, Python, **shared-code commit** | |
+| `run_info.json` | command used, start time, machine, Python, **which code and its commit** (`code`; runs before 2026-11-10 have `polaritonic_deep_md` instead) | |
 | `run.log` | everything printed during the run (check here if it fails) | |
 | `settings.json` | the full settings `cboamd` actually used, including defaults | |
 | `md.log` | per-step time, total/potential/kinetic energy, temperature | ps, eV, K |
@@ -261,14 +293,15 @@ leave open.
 ## 7. NEP models
 
 The `nep` driver for CO₂ uses the NEP models (energy, dipole, polarizability)
-that Johannes committed to the shared repo on 2026-06-15:
+that ship with the group code:
 
 ```
-../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/nep-{energy,dipole,polar}.txt
+<code repo>/tests/e2e/no-polar/mlip/models/nep-{energy,dipole,polar}.txt
 ```
 
-`configs/molecules/co2.json` points straight at them, so a `git pull` there
-picks up any updated models. They reproduce the older `runs/co2/nep` run exactly.
+`configs/molecules/co2.json` points at them as `{code}/tests/...`, where `{code}`
+is the chosen code's folder, so a `git pull` there picks up any updated models.
+The files are identical in `cboamd` and `polaritonic_deep_md`. They reproduce the older `runs/co2/nep` run exactly.
 They're the models the group's own tests and Bonini-comparison benchmarks use.
 Yli's production models (`/mnt/home/yli11/...` on the cluster) may differ. To
 use other models, drop them in `large/models/` and override with
@@ -279,23 +312,27 @@ harmless.
 
 ---
 
-## 8. Keeping the shared code up to date (and safe)
+## 8. Keeping the group code up to date (and safe)
 
 Update:
 
 ```bash
+cd ~/"Flick Group Code/cboamd" && git pull --ff-only
 cd ~/"Flick Group Code/polaritonic_deep_md" && git pull --ff-only
 ```
 
-- The shared repo has a **local lock**: commits and pushes are blocked on this
+- Both code repos have a **local lock**: commits and pushes are blocked on this
   machine, but pulling works.
   - Override once: `git commit --no-verify ...`
   - Remove: `rm .git/hooks/pre-commit .git/hooks/pre-push` in that repo
-- **Never edit or run inside the shared repo.** `cboamd` writes its outputs into
+- **Never edit or run inside either code repo.** `cboamd` writes its outputs into
   whatever folder it's run from. `run.py` always runs in a folder under `runs/`.
-- Every run records the shared-code commit in `run_info.json`. If results change
+- Every run records the code and its commit in `run_info.json`. If results change
   after a `git pull`, compare commits:
-  `git -C ../polaritonic_deep_md log --oneline <old>..<new>`.
+  `git -C ../cboamd log --oneline <old>..<new>`.
+- To check that two runs agree (e.g. after switching code or pulling), use
+  `python scripts/compare_runs.py OLD_RUN NEW_RUN`. `scripts/campaigns/code_check.sh`
+  is the check that the public `cboamd` reproduces the earlier runs.
 
 ---
 
@@ -331,10 +368,11 @@ git push
 | Symptom | Fix |
 |---|---|
 | `ImportError ... scipy` / `_spropack` | You're in base Anaconda. Run `conda activate vsc`. |
-| `'cboamd' not found next to ...python` | Wrong environment, or the group code isn't installed in it: `pip install -e ../polaritonic_deep_md` |
+| `'cboamd' not found in .../bin` | The chosen code isn't installed in its env (§2), or the env path in `configs/codes.json` is wrong. |
+| `driver 'ff' is not available in --code cboamd` | The public code has no `ff` driver. Add `--code pdm`. |
 | `... already exists; use --name` | Same run already done today. Add `--name v2`. |
-| `warning: nep_pot not found` | Model path is wrong; check that the shared repo is at `../polaritonic_deep_md` (§7). |
+| `warning: nep_pot not found` | Model path is wrong; check that the code repo is where `configs/codes.json` says (§7). |
 | Run crashed partway | Read `run.log` in the run folder, then delete the folder and re-run. |
-| `polaritonic_deep_md is locked` | You tried to commit in the shared repo. Commit in your own repo instead. |
+| `... is locked` | You tried to commit in a group code repo. Commit in your own repo instead. |
 | Claude can't see a folder | macOS blocks Desktop, Documents and Downloads. Keep projects under `~/Flick Group Code/`. |
-| Results differ after updating shared code | Compare the `polaritonic_deep_md.commit` in each run's `run_info.json`. |
+| Results differ after updating the code | Compare `code.commit` (older runs: `polaritonic_deep_md.commit`) in each run's `run_info.json`, then run `scripts/compare_runs.py`. |

@@ -2,12 +2,18 @@
 
 Charlie Wade's personal research repo for vibrational strong coupling (VSC): cavity
 Born–Oppenheimer MD of molecules in an optical cavity. It holds **runs, data, plots and
-reports**. The physics code is the Flick group's shared repo, which lives next to this one
-and is only *used* from here.
+reports**. The physics code is the Flick group's, cloned next to this one and only
+*used* from here. Since 2026-11-10 the default is the public release `cboamd`; the
+development repo `polaritonic_deep_md` (all earlier runs) stays available as `--code pdm`.
+**The default is always `cboamd`; don't change `configs/codes.json` "default".** Every run
+is labelled with its code in `run_info.json` (`code` block; older runs:
+`polaritonic_deep_md` block), and `runs/CODES.md` (from `scripts/list_codes.py`, refreshed
+by `run.py`) lists every run's code.
 
 ```
 ~/Flick Group Code/
-├── polaritonic_deep_md/      # shared group code (GitHub flickgroup), READ-ONLY
+├── cboamd/                   # public group code (github flickgroup/cboamd), READ-ONLY, default
+├── polaritonic_deep_md/      # group development code, READ-ONLY, --code pdm
 └── VSC_Molecular_Dynamics/   # this repo (GitHub charliew0707)
 ```
 
@@ -18,15 +24,21 @@ and `results/<mol>/<campaign>/peaks.csv`.
 
 ## Hard rules
 
-- **Never edit, commit to, or run inside `../polaritonic_deep_md`.** The only allowed
-  command there is `git pull --ff-only`. It has local pre-commit/pre-push hooks that
-  block commits on purpose; don't remove or bypass them. Read its code freely.
+- **Never delete or overwrite anything already made** (runs, results, reports, envs,
+  clones), on the machine or in the repo. Add alongside instead; ask if removal seems needed.
+- **Never edit, commit to, or run inside `../cboamd` or `../polaritonic_deep_md`.** The
+  only allowed command there is `git pull --ff-only`. Both have local pre-commit/pre-push
+  hooks that block commits on purpose; don't remove or bypass them. Read their code freely.
 - **Stage explicit paths, never `git add -A` / `git add .`.** Charlie runs his own tests
   in this repo, and a blanket add once pushed a half-finished run of his. Check
   `git status` and ask about run folders you didn't create.
 - **Ask before deleting run data** you didn't create in this session.
-- Use the **`vsc` conda env** (`/opt/anaconda3/envs/vsc/bin/python`). The group code is
-  `pip install -e` linked there. Don't install into or run from base Anaconda.
+- Start scripts with the **`vsc` conda env** (`/opt/anaconda3/envs/vsc/bin/python`).
+  `run.py` then calls `cboamd`/`infrared` from the chosen code's env (`configs/codes.json`):
+  `cboamd_public` for `--code cboamd`, `vsc` for `--code pdm`. The two codes install the
+  same package/command names, so never install one into the other's env. The envs
+  `cboamd` and `cboamd_clean` are Charlie's older setups: don't use or change them.
+  Don't install into or run from base Anaconda.
 - **Background jobs started by Claude are killed after ~30 min.** Size every batch to
   finish in under ~25 min (see costs below). Longer runs: give Charlie the command to run
   in his own terminal.
@@ -34,13 +46,13 @@ and `results/<mol>/<campaign>/peaks.csv`.
 ## Running
 
 ```bash
-python scripts/run.py <molecule> <driver> [--cavity] [--lam L ...] [--omega CM] \
-    [--steps N] [--set key=value] [--campaign NAME] [--name TAG] [--dry-run]
+python scripts/run.py <molecule> <driver> [--code cboamd|pdm] [--cavity] [--lam L ...] \
+    [--omega CM] [--steps N] [--set key=value] [--campaign NAME] [--name TAG] [--dry-run]
 ```
 
 - Builds `in.json` from `configs/defaults.json` + `configs/molecules/<mol>.json` +
   `configs/drivers/<driver>.json` + CLI options. Makes a fresh folder
-  `runs/<mol>/[<campaign>/]<run>/`, writes `run_info.json` (command + shared-repo commit),
+  `runs/<mol>/[<campaign>/]<run>/`, writes `run_info.json` (command + `code` name/commit),
   runs `cboamd` then `infrared -m ase`, and writes `dipole.dat.gz` / `energy.dat.gz`.
   It refuses to overwrite an existing folder.
 - A sweep is a **campaign**: `scripts/campaigns/<name>.sh` (re-creates the runs) +
@@ -91,7 +103,8 @@ else `dipole.dat.gz`. Runs committed before 2026-10-02 still have older tracked 
 - Short runs: unwindowed FFT side lobes are ~20% of the main peak. H₂O peak finding uses
   zero-padding plus a ≥ 50% height rule (`plot_h2o_sweep.py`). CO₂ uses the group
   benchmark's method (`plot_co2_sweep.py`).
-- CO₂ NEP models = `../polaritonic_deep_md/tests/e2e/no-polar/mlip/models/`. NEP runs
+- CO₂ NEP models = `<code repo>/tests/e2e/no-polar/mlip/models/` (identical in both codes;
+  `co2.json` writes `{code}/...`). The public `cboamd` has no `ff` driver (use `--code pdm`). NEP runs
   print a harmless ASE `FutureWarning`.
 
 ## Validation anchors

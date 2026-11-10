@@ -1,0 +1,14 @@
+{
+    "command": "run.py h2o pyscf --cavity --lam 0.1 --steps 10 --code pdm --campaign 2026-11-10_code_check --name pdm_smoke",
+    "started": "2026-11-10T14:41:40",
+    "host": "Charless-MacBook-Air.local",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "code": {
+        "name": "pdm",
+        "repo": "/Users/charleswade/Flick Group Code/polaritonic_deep_md",
+        "env": "/opt/anaconda3/envs/vsc",
+        "commit": "f0c0ed7",
+        "date": "2026-07-24 10:24:57 -0400",
+        "uncommitted_changes": false
+    }
+}
