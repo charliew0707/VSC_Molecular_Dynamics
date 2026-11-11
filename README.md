@@ -23,7 +23,7 @@ Flick Group Code/
 | Folder | What's in it |
 |---|---|
 | [`reports/`](reports/) | **Start here.** Write-ups of what was run and what it showed (LaTeX + PDF), named by date. |
-| [`paper/`](paper/) | Working draft of the paper planned from this project (LaTeX + PDF, `\todo{}` marks what's still to do). |
+| [`paper/`](paper/) | Draft of the paper planned from this project (LaTeX + PDF): abstract and introduction written, other sections still to write. |
 | [`results/`](results/) | Figures and peak tables (`peaks.csv`), grouped by molecule, then by campaign. |
 | [`runs/`](runs/) | Raw simulation data, grouped by molecule, then by campaign, one folder per run. |
 | [`scripts/`](scripts/) | `run.py` (launches a run), `campaigns/` (scripts that re-create each set of runs), `plot_*.py` (turn runs into figures), `check_energy.py`. |
