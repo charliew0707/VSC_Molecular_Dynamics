@@ -1,0 +1,9 @@
+run,R_A,lambda,steps,resolution_cm-1,bend_cm-1,LP_cm-1,UP_cm-1,Rabi_cm-1,resolved,max_rotation_deg,max_drift_A,min_separation_A
+pyscf_R4.0_bare,4.0,0.0,800,83.4,1603,,,,False,0.0,0.832,2.34
+pyscf_R6.0_bare,6.0,0.0,800,83.4,1582,,,,False,0.0,0.501,5.02
+pyscf_R8.0_bare,8.0,0.0,800,83.4,1582,,,,False,0.0,0.160,7.71
+pyscf_R10.0_bare,10.0,0.0,800,83.4,1582,,,,False,0.0,0.073,9.88
+pyscf_cav_w1584_lam0.2_R4.0,4.0,0.2,800,83.4,1322,1322,1770,448,True,0.0,0.823,2.35
+pyscf_cav_w1584_lam0.2_R6.0,6.0,0.2,800,83.4,1364,1364,1739,375,True,0.0,0.447,5.11
+pyscf_cav_w1584_lam0.2_R8.0,8.0,0.2,800,83.4,1364,1364,1739,375,True,0.0,0.138,7.73
+pyscf_cav_w1584_lam0.2_R10.0,10.0,0.2,800,83.4,1364,1364,1739,375,True,0.0,0.057,9.89
