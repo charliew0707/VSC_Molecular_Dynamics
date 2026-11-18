@@ -1,0 +1,8 @@
+6
+Lattice="27.0 0.0 0.0 0.0 27.0 0.0 0.0 0.0 27.0" Properties=species:S:1:pos:R:3 molecules=2 molecule=h2o arrangement=headtail axis=x R_angstrom=6.0 source=h2o-single-x.xyz made_by=scripts/make_cluster.py pbc="F F F"
+O       -2.60083933       0.00000000       0.00000000
+H       -3.19958033       0.75695000       0.00000000
+H       -3.19958033      -0.75695000       0.00000000
+O        3.39916067       0.00000000       0.00000000
+H        2.80041967       0.75695000       0.00000000
+H        2.80041967      -0.75695000       0.00000000

@@ -1,0 +1,6 @@
+{
+    "_comment": "Two identical, aligned H2O molecules (each C2 axis along x, like h2o-single-x.xyz), head-to-tail along x, built by scripts/make_cluster.py. Default separation R = 8.0 A; other separations: --set xyz_file=geometries/h2o_N2_headtail-x_R<R>A.xyz --name R<R>. Cavity tuned to the bend, polarized along x, same as the single molecule. Runs go to runs/h2o_N2/.",
+    "xyz_file": "geometries/h2o_N2_headtail-x_R8.0A.xyz",
+    "omega_cm": 1584,
+    "lambda_vector": [[1, 0, 0]]
+}

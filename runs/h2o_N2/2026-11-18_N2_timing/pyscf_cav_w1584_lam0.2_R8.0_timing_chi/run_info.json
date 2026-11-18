@@ -1,0 +1,14 @@
+{
+    "command": "run.py h2o_N2 pyscf --cavity --lam 0.2 --steps 20 --campaign 2026-11-18_N2_timing --name R8.0_timing_chi --set polar=true",
+    "started": "2026-11-18T12:04:56",
+    "host": "Charless-Air.lan",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "code": {
+        "name": "cboamd",
+        "repo": "/Users/charleswade/Flick Group Code/cboamd",
+        "env": "/opt/anaconda3/envs/cboamd_public",
+        "commit": "89bc6dd",
+        "date": "2026-09-21 09:31:56 -0400",
+        "uncommitted_changes": false
+    }
+}

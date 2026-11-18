@@ -58,6 +58,11 @@ python scripts/run.py <molecule> <driver> [--code cboamd|pdm] [--cavity] [--lam 
 - A sweep is a **campaign**: `scripts/campaigns/<name>.sh` (re-creates the runs) +
   `scripts/plot_<name>.py` (writes figures and `peaks.csv` to `results/<mol>/<campaign>/`).
   Campaign folders are date-prefixed, e.g. `2026-10-02_lambda_sweep`.
+- Multi-molecule: `scripts/make_cluster.py` builds `geometries/<mol>_N<N>_<arrangement>-<axis>_R<R>A.xyz`;
+  presets `configs/molecules/<mol>_N<N>.json` send runs to `runs/<mol>_N<N>/`; put R in `--name`.
+- `check_energy.py` flags very short runs (~20 steps) as CHECK because it normalizes by
+  the kinetic + photon energy *range*, which is tiny before motion builds up; compare the
+  absolute H range (meV) with a full-length run instead.
 - Run folder suffixes the plot scripts rely on: `_bare` (no cavity, λ = 0), `_chi`
   (polarizability on), `_nochi` (off).
 - Parallel PySCF: one process per run with `OMP_NUM_THREADS=1`.
@@ -70,6 +75,8 @@ python scripts/run.py <molecule> <driver> [--code cboamd|pdm] [--cavity] [--lam 
 | CO₂ | PySCF, χ off | ~1.1 s | 5 runs × 800 steps in parallel ≈ 23 min (the limit) |
 | H₂O | PySCF, χ off | ~0.17 s | 7 runs × 800 steps in parallel ≈ 7 min |
 | H₂O | PySCF, χ on | ~0.8 s | batches of ≤ 3 × 800 steps ≈ 15 min |
+| 2 H₂O | PySCF, χ off | ~1.2 s | 800 steps ≈ 17 min alone (measured 2026-11-18, OMP=1) |
+| 2 H₂O | PySCF, χ on | ~5.1 s | 800 steps ≈ 70 min: Charlie runs these himself |
 
 Frequency resolution = 33356 / (steps × dt[fs]) cm⁻¹: 800 steps → 83, 10,000 → 6.7.
 

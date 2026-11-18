@@ -281,6 +281,18 @@ leave open.
   }
   ```
   After that, `python scripts/run.py <name> pyscf ...` works.
+- **Several molecules (clusters):** `scripts/make_cluster.py` copies a molecule's
+  geometry N times, aligned, at separation R (centre to centre), and names the file
+  after what it is:
+  ```bash
+  python scripts/make_cluster.py h2o 2 4 6 8 10    # -> geometries/h2o_N2_headtail-x_R<R>A.xyz
+  python scripts/make_cluster.py h2o 3 8 --arrangement sidebyside
+  ```
+  `headtail` shifts copies along x (the dipole and polarization axis), `sidebyside`
+  along y. Each N gets its own molecule preset, e.g. `configs/molecules/h2o_N2.json`
+  (default R = 8 Å), so its runs land in their own folder, `runs/h2o_N2/`. Pick another
+  separation with `--set xyz_file=geometries/h2o_N2_headtail-x_R4.0A.xyz --name R4.0`
+  (always put R in `--name` so the folder says which geometry it used).
 - **A new driver preset,** such as a PBE variant: copy `configs/drivers/pyscf.json`
   to `configs/drivers/pyscf_pbe.json` and edit it. It then shows up as the
   driver `pyscf_pbe`.
