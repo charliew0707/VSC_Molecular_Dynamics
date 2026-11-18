@@ -116,6 +116,9 @@ else `dipole.dat.gz`. Runs committed before 2026-10-02 still have older tracked 
 - **Two aligned head-to-tail waters attract** (dipole–dipole): from R = 8 Å they touch
   (2.3 Å) at ~1.35 ps and bounce apart, doubling the spectral peaks. Analyse only the
   part of the run before contact (check separation with `scripts/molecule_motion.py`).
+  Side by side (`--arrangement sidebyside`, shifted along y) they repel instead
+  (8 → 11.6 Å in 2 ps) and librate ±22°: the usable arrangement for full runs.
+  2 ps, λ = 0.2, relaxed: Rabi 340 (ratio 1.36 to one water).
 - **Molecules rotate** when the polarization is tilted from their dipole (H₂O strongly,
   CO₂ beyond ~45°), so tilted-cavity runs are not clean cos θ tests. H₂O swings back
   and forth (libration); quote the largest swing from `scripts/molecule_motion.py`. The

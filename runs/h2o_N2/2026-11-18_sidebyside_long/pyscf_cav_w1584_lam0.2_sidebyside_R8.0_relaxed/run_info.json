@@ -1,0 +1,14 @@
+{
+    "command": "run.py h2o_N2 pyscf --cavity --lam 0.2 --steps 4000 --campaign 2026-11-18_sidebyside_long --set xyz_file=geometries/h2o_N2_sidebyside-y_R8.0A.xyz --set qa0=-42.8414 --name sidebyside_R8.0_relaxed",
+    "started": "2026-11-18T15:35:14",
+    "host": "Charless-Air.lan",
+    "python": "/opt/anaconda3/envs/vsc/bin/python",
+    "code": {
+        "name": "cboamd",
+        "repo": "/Users/charleswade/Flick Group Code/cboamd",
+        "env": "/opt/anaconda3/envs/cboamd_public",
+        "commit": "89bc6dd",
+        "date": "2026-09-21 09:31:56 -0400",
+        "uncommitted_changes": false
+    }
+}

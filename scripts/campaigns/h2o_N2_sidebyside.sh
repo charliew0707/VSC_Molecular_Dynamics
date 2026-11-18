@@ -18,6 +18,14 @@
 #           by 15 deg, with or without the cavity (dipole-dipole torque), so
 #           check the rotation in the long run.
 #   energy ok in both (fluct 1.9%, drift < 0.3%).
+# Results, 4000 steps (2 ps, 8 cm^-1 resolution):
+#   cavity: LP 1424 / UP 1764, Rabi 340 (1st ps 334, 2nd ps 350); ratio to one
+#           water (250) = 1.36, vs sqrt(2) = 1.41. The waters librate (each swings
+#           up to 22 deg from x and back, mirror images of each other); average
+#           cos ~ 0.97 accounts for most of the 4% shortfall.
+#   motion: the pair keeps pushing apart, 8.0 -> 11.6 A; no contact.
+#   energy: check_energy says CHECK (scale only 16.5 meV), but the absolute H
+#           range is 1.0 meV and the drift -0.5 meV over 2 ps: fine.
 #
 # Usage (from the repo root, in the vsc env):
 #   bash scripts/campaigns/h2o_N2_sidebyside.sh short   # cavity + bare, 800 steps, ~18 min
