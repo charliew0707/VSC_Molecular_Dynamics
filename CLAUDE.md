@@ -62,7 +62,8 @@ python scripts/run.py <molecule> <driver> [--code cboamd|pdm] [--cavity] [--lam 
   presets `configs/molecules/<mol>_N<N>.json` send runs to `runs/<mol>_N<N>/`; put R in `--name`.
 - `check_energy.py` flags very short runs (~20 steps) as CHECK because it normalizes by
   the kinetic + photon energy *range*, which is tiny before motion builds up; compare the
-  absolute H range (meV) with a full-length run instead.
+  absolute H range (meV) with a full-length run instead Relaxed-photon-start runs (little energy
+  moving) get the same false CHECK even at 4000 steps.
 - Run folder suffixes the plot scripts rely on: `_bare` (no cavity, λ = 0), `_chi`
   (polarizability on), `_nochi` (off).
 - Parallel PySCF: one process per run with `OMP_NUM_THREADS=1`.
@@ -111,6 +112,10 @@ else `dipole.dat.gz`. Runs committed before 2026-10-02 still have older tracked 
   H₂O q = 0 runs are not in the linear regime. 1 H₂O / 2 H₂O at λ = 0.2: Rabi 239 / 375
   (q = 0) vs 271 / 354 (relaxed); ratio 1.57 vs 1.31 (√2 = 1.41). See
   `scripts/campaigns/h2o_relaxed_photon.sh` for how q0 is computed.
+  At 4000 steps (relaxed): 1 H₂O Rabi 250, 2 H₂O 354 (first 1 ps), ratio 1.42 ≈ √2.
+- **Two aligned head-to-tail waters attract** (dipole–dipole): from R = 8 Å they touch
+  (2.3 Å) at ~1.35 ps and bounce apart, doubling the spectral peaks. Analyse only the
+  part of the run before contact (check separation with `scripts/molecule_motion.py`).
 - **Molecules rotate** when the polarization is tilted from their dipole (H₂O strongly,
   CO₂ beyond ~45°), so tilted-cavity runs are not clean cos θ tests. H₂O swings back
   and forth (libration); quote the largest swing from `scripts/molecule_motion.py`. The
