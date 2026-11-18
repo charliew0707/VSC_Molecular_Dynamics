@@ -105,6 +105,12 @@ else `dipole.dat.gz`. Runs committed before 2026-10-02 still have older tracked 
   effective one is 2464, so true resonance is ≈ 2500 cm⁻¹. CO₂ detuning matches the exact
   linear (Hopfield + self-energy) model to 2.6 cm⁻¹. H₂O sits 40–60 cm⁻¹ below it (open
   question).
+- **Photon start matters for H₂O.** All runs before 2026-11-18 start at q = 0, which
+  kicks the cavity with energy ∝ (λμ)² (4× for two waters) and drives the dipole 20–30×
+  harder than the relaxed start `--set qa0=<λμ_x/ω>`; polaritons shift by 10–50 cm⁻¹, so
+  H₂O q = 0 runs are not in the linear regime. 1 H₂O / 2 H₂O at λ = 0.2: Rabi 239 / 375
+  (q = 0) vs 271 / 354 (relaxed); ratio 1.57 vs 1.31 (√2 = 1.41). See
+  `scripts/campaigns/h2o_relaxed_photon.sh` for how q0 is computed.
 - **Molecules rotate** when the polarization is tilted from their dipole (H₂O strongly,
   CO₂ beyond ~45°), so tilted-cavity runs are not clean cos θ tests. H₂O swings back
   and forth (libration); quote the largest swing from `scripts/molecule_motion.py`. The
