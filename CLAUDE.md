@@ -106,7 +106,9 @@ else `dipole.dat.gz`. Runs committed before 2026-10-02 still have older tracked 
   linear (Hopfield + self-energy) model to 2.6 cm⁻¹. H₂O sits 40–60 cm⁻¹ below it (open
   question).
 - **Molecules rotate** when the polarization is tilted from their dipole (H₂O strongly,
-  CO₂ beyond ~45°), so tilted-cavity runs are not clean cos θ tests.
+  CO₂ beyond ~45°), so tilted-cavity runs are not clean cos θ tests. H₂O swings back
+  and forth (libration); quote the largest swing from `scripts/molecule_motion.py`. The
+  2026-10-02 report's "49° at θ = 30°" was the final-frame angle; the largest swing is 72°.
 - Short runs: unwindowed FFT side lobes are ~20% of the main peak. H₂O peak finding uses
   zero-padding plus a ≥ 50% height rule (`plot_h2o_sweep.py`). CO₂ uses the group
   benchmark's method (`plot_co2_sweep.py`).

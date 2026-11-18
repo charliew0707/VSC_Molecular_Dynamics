@@ -221,6 +221,21 @@ PySCF only). It uses a zero-padded, unwindowed FFT with a 50% height rule for
 calling a split (see the script's docstring), because H₂O splittings are close to
 the 800-step resolution.
 
+The two-water **separation scan** (2 H₂O at R = 4, 6, 8, 10 Å, λ = 0.2, χ off) runs
+in two batches of four, about 20 min each:
+`bash scripts/campaigns/h2o_N2_separation_scan.sh cavity`, then `... bare`, then
+`python scripts/plot_h2o_N2_separation.py runs/h2o_N2/2026-11-18_separation_scan`.
+It plots the splitting vs R against 1× and √2× the single-water value, and the bare
+bend vs R against the single-water bend (`results/h2o_N2/<campaign>/`).
+
+**Molecule motion:** `python scripts/molecule_motion.py runs/<molecule>/<campaign>`
+prints, per molecule, the largest rotation of its axis, the largest tilt from the
+cavity polarization, the centre-of-mass drift and (for clusters) the closest and
+farthest centre-to-centre distance. Molecules in a tilted field swing back and forth,
+so it reports the largest swing, not the final angle. It needs `position.dat` or
+`md.traj`, which only exist on the machine that ran the job; the separation-scan plot
+script saves these numbers in `peaks.csv`.
+
 **Energy check:** before trusting a new set of runs, run
 `python scripts/check_energy.py runs/<molecule>/<campaign>`. It reports how well the
 total energy (molecule + cavity) is conserved. ~1% fluctuation and < 0.5% drift is
