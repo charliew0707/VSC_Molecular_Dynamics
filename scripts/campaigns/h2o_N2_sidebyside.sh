@@ -22,7 +22,8 @@
 #   cavity: LP 1424 / UP 1764, Rabi 340 (1st ps 334, 2nd ps 350); ratio to one
 #           water (250) = 1.36, vs sqrt(2) = 1.41. The waters librate (each swings
 #           up to 22 deg from x and back, mirror images of each other); average
-#           cos ~ 0.97 accounts for most of the 4% shortfall.
+#           cos = 0.98 (rms swing 11 deg) predicts 1.39, so it explains about half
+#           of the shortfall; the rest is within the +-0.05 uncertainty.
 #   motion: the pair keeps pushing apart, 8.0 -> 11.6 A; no contact.
 #   energy: check_energy says CHECK (scale only 16.5 meV), but the absolute H
 #           range is 1.0 meV and the drift -0.5 meV over 2 ps: fine.

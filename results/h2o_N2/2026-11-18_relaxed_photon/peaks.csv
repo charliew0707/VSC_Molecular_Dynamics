@@ -1,0 +1,13 @@
+key,run,steps_used,resolution_cm-1,LP_or_bend_cm-1,UP_cm-1,Rabi_cm-1
+1w_q0,h2o/2026-10-02_lambda_sweep/pyscf_cav_w1584_lam0.2_nochi,800,83.4,1447,1687,239
+1w_rel,h2o/2026-11-18_relaxed_photon/pyscf_cav_w1584_lam0.2_relaxed,800,83.4,1458,1728,271
+1w_rel_long,h2o/2026-11-18_relaxed_photon_long/pyscf_cav_w1584_lam0.2_relaxed,4000,16.7,1465,1713,248
+ht_q0,h2o_N2/2026-11-18_separation_scan/pyscf_cav_w1584_lam0.2_R8.0,800,83.4,1364,1739,375
+ht_bare,h2o_N2/2026-11-18_separation_scan/pyscf_R8.0_bare,800,83.4,1582,,
+ht_rel,h2o_N2/2026-11-18_relaxed_photon/pyscf_cav_w1584_lam0.2_R8.0_relaxed,800,83.4,1416,1770,354
+ht_rel_long,h2o_N2/2026-11-18_relaxed_photon_long/pyscf_cav_w1584_lam0.2_R8.0_relaxed,4000,16.7,1411,1782,371
+sbs_rel,h2o_N2/2026-11-18_sidebyside/pyscf_cav_w1584_lam0.2_sidebyside_R8.0_relaxed,800,83.4,1426,1770,344
+sbs_bare,h2o_N2/2026-11-18_sidebyside/pyscf_sidebyside_R8.0_bare,800,83.4,1582,,
+sbs_rel_long,h2o_N2/2026-11-18_sidebyside_long/pyscf_cav_w1584_lam0.2_sidebyside_R8.0_relaxed,4000,16.7,1424,1763,340
+ht_rel_long_1ps,h2o_N2/2026-11-18_relaxed_photon_long/pyscf_cav_w1584_lam0.2_R8.0_relaxed,2000,33.4,1417,1771,354
+1w_rel_long_1ps,h2o/2026-11-18_relaxed_photon_long/pyscf_cav_w1584_lam0.2_relaxed,2000,33.4,1467,1713,246
